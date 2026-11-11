@@ -108,18 +108,6 @@
       border-color: #4ade80 !important;
     }
 
-    /* 系統校核 (石板霧灰) */
-    .btn-top-audit {
-      background-color: #f8fafc !important;
-      border: 1px solid #cbd5e1 !important;
-      color: #334155 !important;
-    }
-    .btn-top-audit:hover {
-      background-color: #f1f5f9 !important;
-      color: #0f172a !important;
-      border-color: #94a3b8 !important;
-    }
-
     /* 身分徽章柔和沈穩色 */
     .auth-badge-leader { background-color: #991b1b !important; color: #ffffff !important; }
     .auth-badge-cadre  { background-color: #d97706 !important; color: #ffffff !important; }
@@ -456,7 +444,7 @@
 <body class="p-2">
 
   <div class="container-fluid px-1 px-md-2">
-    <!-- 頂端控制列：標題在左，身分標籤與微調後的精緻商務色系按鈕水平齊平 -->
+    <!-- 頂端控制列 -->
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
       <div>
         <h4 class="app-header mb-0">
@@ -505,12 +493,12 @@
           </ul>
         </div>
 
-        <!-- 幹部專屬：一鍵通知 (高雅柔和暖金) -->
+        <!-- 幹部專屬：一鍵通知 -->
         <button class="btn btn-top-notify" id="btnBatchNotify" style="display: none;" onclick="openNotifyModal()">
           <i class="fa-solid fa-bell me-1"></i>一鍵通知
         </button>
 
-        <!-- Excel管理 (柔和淡綠) -->
+        <!-- Excel管理 -->
         <div class="btn-group">
           <button class="btn btn-top-excel dropdown-toggle" type="button" data-bs-toggle="dropdown">
             <i class="fa-solid fa-file-excel me-1"></i>Excel管理
@@ -532,7 +520,7 @@
         <div id="cardTotalTasks" class="card p-2 border-0 shadow-sm bg-white border-start border-4 border-primary stat-card h-100" onclick="quickFilterStatus('全部')">
           <div class="d-flex justify-content-between align-items-center">
             <div>
-              <div class="text-muted" style="font-size: 0.72rem;"><span id="statYearLabel1"></span>專案總數</div>
+              <div class="text-muted" style="font-size: 0.72rem;">專案總數</div>
               <h5 class="fw-bold mb-0 text-dark" id="statTotalTasks">0</h5>
             </div>
             <i class="fa-solid fa-folder-tree fa-lg text-primary opacity-50"></i>
@@ -543,7 +531,7 @@
         <div id="cardAiTasks" class="card p-2 border-0 shadow-sm bg-white border-start border-4 border-info stat-card h-100" onclick="quickFilterStatus('AI')">
           <div class="d-flex justify-content-between align-items-center">
             <div>
-              <div class="text-muted" style="font-size: 0.72rem;"><span id="statYearLabel2"></span>AI 導入率</div>
+              <div class="text-muted" style="font-size: 0.72rem;">AI 導入率</div>
               <h5 class="fw-bold mb-0 text-info" id="statAiRate">0%</h5>
             </div>
             <i class="fa-solid fa-robot fa-lg text-info opacity-50"></i>
@@ -554,7 +542,7 @@
         <div id="cardExtremeTasks" class="card p-2 border-0 shadow-sm bg-white border-start border-4 border-danger stat-card h-100" onclick="quickFilterStatus('極重要')">
           <div class="d-flex justify-content-between align-items-center">
             <div>
-              <div class="text-muted" style="font-size: 0.72rem;"><span id="statYearLabel3"></span>繁星極重要</div>
+              <div class="text-muted" style="font-size: 0.72rem;">繁星極重要</div>
               <h5 class="fw-bold mb-0 text-danger" id="statExtremeTasks">0</h5>
             </div>
             <i class="fa-solid fa-fire fa-lg text-danger opacity-50"></i>
@@ -565,7 +553,7 @@
         <div id="cardArchivedTasks" class="card p-2 border-0 shadow-sm bg-white border-start border-4 border-success stat-card h-100" onclick="quickFilterStatus('解列')">
           <div class="d-flex justify-content-between align-items-center">
             <div>
-              <div class="text-muted" style="font-size: 0.72rem;"><span id="statYearLabel4"></span>已解列/完成</div>
+              <div class="text-muted" style="font-size: 0.72rem;">已解列/完成</div>
               <h5 class="fw-bold mb-0 text-success" id="statArchivedTasks">0</h5>
             </div>
             <i class="fa-solid fa-circle-check fa-lg text-success opacity-50"></i>
@@ -634,7 +622,7 @@
           </tr>
         </thead>
         <tbody id="taskTableBody">
-          <tr><td colspan="15" class="text-center py-4 text-muted">載入案件清單中...</td></tr>
+          <tr><td colspan="15" class="text-center py-4 text-muted"><div class="spinner-border spinner-border-sm text-primary me-2"></div>載入案件清單中...</td></tr>
         </tbody>
       </table>
     </div>
@@ -726,22 +714,19 @@
         </div>
         <div class="modal-body p-3">
           <p class="small text-muted mb-3">
-            系統將自動彙整目前所有<strong>「未解列案件」</strong>，並分別發送專屬公務 Email 給各專案之主責與協同同仁，提醒及時更新辦理進度。
+            系統將自動彙整目前所有<strong>「未解列案件」</strong>，並發送公務 Email 給各專案同仁。
           </p>
-
           <div class="mb-3">
             <label class="form-label small fw-bold text-danger">
               <i class="fa-regular fa-clock me-1"></i><span class="text-danger">*</span> 請設定填寫截止時間：
             </label>
             <input type="datetime-local" id="notifyDeadlineInput" class="form-control form-control-sm fw-bold text-danger" required>
-            <div class="form-text" style="font-size: 0.72rem;">此時間將顯著呈現於同仁之通知郵件主旨與醒目警示欄中。</div>
           </div>
-
           <div class="mb-2">
             <label class="form-label small fw-bold text-dark">
               <i class="fa-solid fa-pen-nib me-1"></i>幹部備註提醒事項（選填）：
             </label>
-            <textarea id="notifyRemarkInput" class="form-control form-control-sm" rows="3" placeholder="例如：因應局務會議管考，請各專案承辦務必於期限前完成具體進度更新..."></textarea>
+            <textarea id="notifyRemarkInput" class="form-control form-control-sm" rows="3" placeholder="例如：因應局務會議管考，請各專案承辦務必於期限前完成更新..."></textarea>
           </div>
         </div>
         <div class="modal-footer py-2">
@@ -754,7 +739,7 @@
     </div>
   </div>
 
-  <!-- 新增/編輯 Modal (含23項類別選單與晨會指示標籤) -->
+  <!-- 新增/編輯 Modal -->
   <div class="modal fade" id="taskModal" tabindex="-1">
     <div class="modal-dialog modal-lg modal-dialog-scrollable">
       <div class="modal-content">
@@ -791,7 +776,7 @@
               </div>
             </div>
 
-            <!-- 工作項目：23項業務分類與【OO】自動聯動 -->
+            <!-- 工作項目 -->
             <div class="mb-2">
               <div class="d-flex justify-content-between align-items-center mb-1">
                 <label class="form-label small fw-bold text-primary mb-0">
@@ -831,14 +816,14 @@
             </div>
 
             <div class="mb-2">
-              <label class="form-label small fw-bold text-dark"><i class="fa-solid fa-list-check me-1"></i>具體目標 / 列管專案內容 (細部指標，支援上下滑桿調整)</label>
+              <label class="form-label small fw-bold text-dark"><i class="fa-solid fa-list-check me-1"></i>具體目標 / 列管專案內容</label>
               <textarea id="formSubGoals" class="form-control form-control-sm auto-expand-textarea" rows="3" placeholder="請分點分列填寫..." oninput="autoResizeTextarea(this)"></textarea>
             </div>
 
             <!-- 承辦與督導配對設定 -->
             <div class="row g-2 mb-2 p-2 rounded bg-light border">
               <div class="col-12 text-muted fw-bold small mb-1">
-                <i class="fa-solid fa-user-group text-primary me-1"></i>承辦與督導配對設定 (選定承辦自動帶出股長，選股長自動對應專員)
+                <i class="fa-solid fa-user-group text-primary me-1"></i>承辦與督導配對設定
               </div>
               <div class="col-12 col-md-6 border-end">
                 <label class="form-label small fw-bold text-primary">① 主責組 (承辦人 - 督導幹部)</label>
@@ -906,14 +891,14 @@
             </div>
 
             <div class="mb-2">
-              <label class="form-label small fw-bold">同仁最新進度回報 (支援文字自動延展與上下滾動軸)</label>
+              <label class="form-label small fw-bold">同仁最新進度回報</label>
               <textarea id="formProgress" class="form-control form-control-sm auto-expand-textarea" rows="3" placeholder="請對齊具體目標分點填寫..." oninput="autoResizeTextarea(this)"></textarea>
             </div>
           </form>
         </div>
         <div class="modal-footer py-2">
           <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">取消</button>
-          <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="submitTaskForm()">儲存送出</button>
+          <button type="button" class="btn btn-primary btn-sm fw-bold" id="btnSaveTask" onclick="submitTaskForm()">儲存送出</button>
         </div>
       </div>
     </div>
@@ -928,7 +913,7 @@
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body p-3">
-          <p class="small text-muted mb-2">請選取歷史案件 Excel 檔案（.xlsx 或 .xls），系統將自動讀取、校正格式並批次寫入：</p>
+          <p class="small text-muted mb-2">請選取歷史案件 Excel 檔案（.xlsx 或 .xls）：</p>
           <div class="mb-3">
             <input class="form-control form-control-sm" type="file" id="excelFileInput" accept=".xlsx, .xls">
           </div>
@@ -943,7 +928,7 @@
     </div>
   </div>
 
-  <!-- 幹部審閱 Modal (專員/科長/股長專用) -->
+  <!-- 幹部審閱 Modal -->
   <div class="modal fade" id="reviewModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
@@ -975,63 +960,18 @@
     </div>
   </div>
 
-  <!-- 系統檢核與修復 Modal -->
-  <div class="modal fade" id="auditModal" tabindex="-1">
-    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-      <div class="modal-content">
-        <div class="modal-header bg-dark text-white py-2">
-          <h6 class="modal-title fw-bold" id="auditModalTitle"><i class="fa-solid fa-shield-halved text-warning me-2"></i>Google 日曆與系統排程診斷</h6>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body p-3">
-          <div id="auditLoadingState" class="text-center py-4">
-            <div class="spinner-border text-primary me-2"></div>
-            <span class="text-muted fw-bold">正在掃描系統狀態...</span>
-          </div>
-          <div id="auditResultContent" style="display: none;">
-            <div class="row g-2 mb-3">
-              <div class="col-12 col-md-6">
-                <div class="p-2 border rounded bg-white shadow-sm d-flex justify-content-between align-items-center">
-                  <div>
-                    <span class="small fw-bold text-dark"><i class="fa-regular fa-sun text-warning me-1"></i>每日晨報推播：</span>
-                    <div id="dailyBriefingBadge" class="badge bg-secondary mt-1">檢測中...</div>
-                  </div>
-                  <div id="dailyBriefingBtnContainer"></div>
-                </div>
-              </div>
-              <div class="col-12 col-md-6">
-                <div class="p-2 border rounded bg-white shadow-sm d-flex justify-content-between align-items-center">
-                  <div>
-                    <span class="small fw-bold text-dark"><i class="fa-solid fa-clock-rotate-left text-primary me-1"></i>每週日曆校對：</span>
-                    <div id="weeklyAuditBadge" class="badge bg-secondary mt-1">檢測中...</div>
-                  </div>
-                  <div id="weeklyAuditBtnContainer"></div>
-                </div>
-              </div>
-            </div>
-
-            <div class="row g-2 mb-3 text-center">
-              <div class="col-3"><div class="p-2 border rounded bg-light"><div class="text-muted small">試算表案件</div><h5 class="mb-0 fw-bold" id="auditTotalTasks">0</h5></div></div>
-              <div class="col-3"><div class="p-2 border rounded bg-light"><div class="text-muted small">日曆事件總數</div><h5 class="mb-0 fw-bold" id="auditTotalEvents">0</h5></div></div>
-              <div class="col-3"><div class="p-2 border rounded bg-light"><div class="text-muted small">日曆遺漏案件</div><h5 class="mb-0 fw-bold text-danger" id="auditMissingCount">0</h5></div></div>
-              <div class="col-3"><div class="p-2 border rounded bg-light"><div class="text-muted small">標籤狀態脫鉤</div><h5 class="mb-0 fw-bold text-warning" id="auditMismatchCount">0</h5></div></div>
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer py-2">
-          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">關閉</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
+    // ==============================================================
+    // 請在此處填入您 Google Apps Script 部署為 Web 應用程式後的網址
+    // ==============================================================
+    const GAS_API_URL = "https://script.google.com/macros/s/AKfycb...請替換為您的GAS網址.../exec";
+
     let allTasks = [];
     let staffData = [];
     let isAllSelected = false;
     let currentView = 'table';
-    let taskModalInstance, reviewModalInstance, auditModalInstance, switchUserModalInstance, importModalInstance, notifyModalInstance;
+    let taskModalInstance, reviewModalInstance, switchUserModalInstance, importModalInstance, notifyModalInstance;
     let currentActiveQuickFilter = null;
 
     let calendarCurrentDate = new Date();
@@ -1046,26 +986,54 @@
       canDelete: false
     };
 
+    // 通用 Fetch API 封裝 (自動處理 GET / POST 轉向)
+    async function callGasApi(action, params = {}, method = 'GET') {
+      try {
+        if (method === 'GET') {
+          const urlParams = new URLSearchParams({ action, ...params });
+          const response = await fetch(`${GAS_API_URL}?${urlParams.toString()}`);
+          if (!response.ok) throw new Error(`HTTP 錯誤碼: ${response.status}`);
+          return await response.json();
+        } else {
+          const response = await fetch(GAS_API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action, ...params })
+          });
+          if (!response.ok) throw new Error(`HTTP 錯誤碼: ${response.status}`);
+          return await response.json();
+        }
+      } catch (err) {
+        console.error(`API [${action}] 調用失敗:`, err);
+        throw err;
+      }
+    }
+
     window.addEventListener("DOMContentLoaded", () => {
       taskModalInstance = new bootstrap.Modal(document.getElementById('taskModal'));
       reviewModalInstance = new bootstrap.Modal(document.getElementById('reviewModal'));
-      auditModalInstance = new bootstrap.Modal(document.getElementById('auditModal'));
       switchUserModalInstance = new bootstrap.Modal(document.getElementById('switchUserModal'));
       importModalInstance = new bootstrap.Modal(document.getElementById('importModal'));
       notifyModalInstance = new bootstrap.Modal(document.getElementById('notifyModal'));
 
-      google.script.run
-        .withSuccessHandler(list => {
-          staffData = list || [];
-          populateStaffSelects(list);
-          populateUserSelectPicker(list);
-          checkAndInitUser();
-        })
-        .withFailureHandler(err => {
-          alert("連線失敗，請確認 Apps Script 部署設定: " + err);
-        })
-        .getStaffList();
+      loadStaffList();
     });
+
+    async function loadStaffList() {
+      try {
+        const res = await callGasApi("getStaffList");
+        if (res && res.success) {
+          staffData = res.data || [];
+          populateStaffSelects(staffData);
+          populateUserSelectPicker(staffData);
+          checkAndInitUser();
+        } else {
+          alert("讀取名單失敗: " + (res ? res.message : "未知錯誤"));
+        }
+      } catch (err) {
+        alert("連線失敗，請確認 GAS API 網址是否已正確部署並設定為所有人皆可存取。");
+      }
+    }
 
     function checkAndInitUser() {
       const savedName = localStorage.getItem("SEC_USER_NAME");
@@ -1115,30 +1083,32 @@
       switchUserModalInstance.show();
     }
 
-    function applyUserAuth(staffName) {
-      google.script.run
-        .withSuccessHandler(auth => {
-          if (!auth || !auth.isValid) {
-            localStorage.removeItem("SEC_USER_NAME");
-            switchUserModalInstance.show();
-            return;
-          }
-          currentUserAuth = auth;
-          renderUserAuthBadge(auth);
+    async function applyUserAuth(staffName) {
+      try {
+        const res = await callGasApi("getAuthByName", { name: staffName });
+        const auth = res && res.success ? res.data : null;
+        if (!auth || !auth.isValid) {
+          localStorage.removeItem("SEC_USER_NAME");
+          switchUserModalInstance.show();
+          return;
+        }
+        currentUserAuth = auth;
+        renderUserAuthBadge(auth);
 
-          const delOpt = document.getElementById("batchDeleteMenuOption");
-          const delAct = document.getElementById("batchDeleteMenuAction");
-          if (delOpt) delOpt.style.display = auth.canDelete ? "block" : "none";
-          if (delAct) delAct.style.display = auth.canDelete ? "block" : "none";
+        const delOpt = document.getElementById("batchDeleteMenuOption");
+        const delAct = document.getElementById("batchDeleteMenuAction");
+        if (delOpt) delOpt.style.display = auth.canDelete ? "block" : "none";
+        if (delAct) delAct.style.display = auth.canDelete ? "block" : "none";
 
-          const notifyBtn = document.getElementById("btnBatchNotify");
-          if (notifyBtn) {
-            notifyBtn.style.display = auth.canReview ? "inline-block" : "none";
-          }
+        const notifyBtn = document.getElementById("btnBatchNotify");
+        if (notifyBtn) {
+          notifyBtn.style.display = auth.canReview ? "inline-block" : "none";
+        }
 
-          loadTasks();
-        })
-        .getAuthByName(staffName);
+        loadTasks();
+      } catch (err) {
+        alert("身分驗證連線失敗: " + err);
+      }
     }
 
     function renderUserAuthBadge(auth) {
@@ -1172,7 +1142,7 @@
       notifyModalInstance.show();
     }
 
-    function submitBatchNotification() {
+    async function submitBatchNotification() {
       const deadlineVal = document.getElementById("notifyDeadlineInput").value;
       if (!deadlineVal) {
         alert("請設定填寫截止時間！");
@@ -1202,32 +1172,39 @@
 
       const btn = document.getElementById("btnConfirmSendNotify");
       btn.disabled = true;
-      btn.innerHTML = `<span class="spinner-border spinner-border-sm me-1"></span>彙整案件並寄信中...`;
+      btn.innerHTML = `<span class="spinner-border spinner-border-sm me-1"></span>寄信中...`;
 
-      google.script.run
-        .withSuccessHandler(res => {
-          btn.disabled = false;
-          btn.innerHTML = `<i class="fa-solid fa-paper-plane me-1"></i>確認發送催填信件`;
+      try {
+        const res = await callGasApi("sendBatchReminder", {
+          tasks: payload,
+          deadline: formattedDeadline,
+          remark: remarkVal,
+          operatorName: currentUserAuth.name
+        }, "POST");
 
-          if (res && res.success) {
-            notifyModalInstance.hide();
-            alert(`🎉 發信成功！\n共已成功發送 ${res.sentCount} 封催填信件。\n已通知同仁：${res.staffListStr}`);
-          } else {
-            alert(res ? res.message : "發生未知錯誤");
-          }
-        })
-        .withFailureHandler(err => {
-          btn.disabled = false;
-          btn.innerHTML = `<i class="fa-solid fa-paper-plane me-1"></i>確認發送催填信件`;
-          alert("❌ 系統發信錯誤: " + err);
-        })
-        .sendBatchProgressReminderEmailDirect(payload, formattedDeadline, remarkVal, currentUserAuth.name);
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fa-solid fa-paper-plane me-1"></i>確認發送催填信件`;
+
+        if (res && res.success) {
+          notifyModalInstance.hide();
+          alert(`🎉 發信成功！\n共已成功發送 ${res.sentCount} 封催填信件。`);
+        } else {
+          alert(res ? res.message : "發生未知錯誤");
+        }
+      } catch (err) {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fa-solid fa-paper-plane me-1"></i>確認發送催填信件`;
+        alert("❌ 系統發信錯誤: " + err);
+      }
     }
 
-    function loadTasks() {
-      google.script.run
-        .withSuccessHandler(renderData)
-        .getTasksData();
+    async function loadTasks() {
+      try {
+        const res = await callGasApi("getTasksData");
+        renderData(res && res.success ? res.data : []);
+      } catch (err) {
+        console.error("載入案件失敗:", err);
+      }
     }
 
     function renderData(data) {
@@ -1813,7 +1790,7 @@
       }
     }
 
-    function submitTaskForm() {
+    async function submitTaskForm() {
       const mainTitle = document.getElementById("formMainTitle").value.trim();
       const subGoals = document.getElementById("formSubGoals").value.trim();
       if (!mainTitle) { alert("請填寫工作項目標題！"); return; }
@@ -1843,17 +1820,30 @@
         progress: document.getElementById("formProgress").value
       };
 
-      google.script.run
-        .withSuccessHandler(res => {
-          if (res && res.success) {
-            taskModalInstance.hide();
-            loadTasks();
-          } else {
-            alert(res.message);
-          }
-        })
-        .withFailureHandler(err => alert("儲存失敗: " + err))
-        .saveTask(payload, currentUserAuth.name);
+      const btn = document.getElementById("btnSaveTask");
+      btn.disabled = true;
+      btn.innerHTML = `<span class="spinner-border spinner-border-sm me-1"></span>儲存中...`;
+
+      try {
+        const res = await callGasApi("saveTask", {
+          payload: payload,
+          operatorName: currentUserAuth.name
+        }, "POST");
+
+        btn.disabled = false;
+        btn.innerHTML = `儲存送出`;
+
+        if (res && res.success) {
+          taskModalInstance.hide();
+          loadTasks();
+        } else {
+          alert(res ? res.message : "儲存失敗");
+        }
+      } catch (err) {
+        btn.disabled = false;
+        btn.innerHTML = `儲存送出`;
+        alert("儲存失敗: " + err);
+      }
     }
 
     function formatStaffPairsHtml(staffStr) {
@@ -1896,7 +1886,6 @@
         return matchYear && matchType && matchTag && matchKeyword && matchQuick;
       });
 
-      // 完成月依 1～12 月排序，未定置底；同月依起始日期、編號排序。
       filtered.sort((a, b) => {
         const getMonth = task => {
           const m = String(task.finishMonth || '').trim().match(/^(\d{1,2})\s*月?$/);
@@ -1944,38 +1933,52 @@
       reviewModalInstance.show();
     }
 
-    function submitReview(status) {
+    async function submitReview(status) {
       const id = document.getElementById("reviewTaskId").value;
       const comment = document.getElementById("reviewComment").value;
       const title = document.getElementById("reviewerTitle").value;
-      google.script.run
-        .withSuccessHandler(res => {
-          if (res && res.success) {
-            reviewModalInstance.hide(); 
-            loadTasks();
-          } else {
-            alert(res.message);
-          }
-        })
-        .updateTaskReview(id, status, comment, title, currentUserAuth.name);
+
+      try {
+        const res = await callGasApi("updateTaskReview", {
+          id: id,
+          status: status,
+          comment: comment,
+          title: title,
+          operatorName: currentUserAuth.name
+        }, "POST");
+
+        if (res && res.success) {
+          reviewModalInstance.hide(); 
+          loadTasks();
+        } else {
+          alert(res ? res.message : "審閱提交失敗");
+        }
+      } catch (err) {
+        alert("審核失敗: " + err);
+      }
     }
 
-    function deleteTaskAction(id) {
+    async function deleteTaskAction(id) {
       if (!currentUserAuth.canDelete) {
         alert("⚠️ 權限不足：僅【科長】與【專員】可刪除案件！");
         return;
       }
       if (confirm(`確定將案件【${id}】移至回收桶？`)) {
-        google.script.run
-          .withSuccessHandler(res => {
-            if (res && res.success) loadTasks();
-            else alert(res.message);
-          })
-          .deleteTask(id, currentUserAuth.name);
+        try {
+          const res = await callGasApi("deleteTask", {
+            id: id,
+            operatorName: currentUserAuth.name
+          }, "POST");
+
+          if (res && res.success) loadTasks();
+          else alert(res ? res.message : "刪除失敗");
+        } catch (err) {
+          alert("刪除失敗: " + err);
+        }
       }
     }
 
-    function deleteSelectedTasks() {
+    async function deleteSelectedTasks() {
       if (!currentUserAuth.canDelete) {
         alert("⚠️ 權限不足：僅【科長】與【專員】具備批次刪除權限！");
         return;
@@ -1984,12 +1987,21 @@
       if (selected.length === 0) { alert("請先勾選欲刪除的專案！"); return; }
       const idList = Array.from(selected).map(cb => cb.dataset.taskId);
       if (confirm(`確定要將所選 ${idList.length} 筆專案移至回收桶？`)) {
-        google.script.run
-          .withSuccessHandler(res => {
-            if (res && res.success) { alert(`已成功將 ${res.count} 筆專案移至回收桶！`); loadTasks(); }
-            else alert(res.message);
-          })
-          .batchDeleteTasks(idList, currentUserAuth.name);
+        try {
+          const res = await callGasApi("batchDeleteTasks", {
+            idList: idList,
+            operatorName: currentUserAuth.name
+          }, "POST");
+
+          if (res && res.success) {
+            alert(`已成功將 ${res.count} 筆專案移至回收桶！`);
+            loadTasks();
+          } else {
+            alert(res ? res.message : "批次刪除失敗");
+          }
+        } catch (err) {
+          alert("批次刪除失敗: " + err);
+        }
       }
     }
 
@@ -2010,29 +2022,6 @@
       document.getElementById("headerCheckbox").checked = false;
     }
 
-    function openCalendarAuditModal(autoFix) {
-      document.getElementById("auditLoadingState").style.display = "block";
-      document.getElementById("auditResultContent").style.display = "none";
-      auditModalInstance.show();
-      google.script.run
-        .withSuccessHandler(res => {
-          document.getElementById("auditLoadingState").style.display = "none";
-          document.getElementById("auditResultContent").style.display = "block";
-          const rep = res.report;
-          document.getElementById("auditTotalTasks").innerText = rep.totalSheetTasks;
-          document.getElementById("auditTotalEvents").innerText = rep.totalCalendarEvents;
-          document.getElementById("auditMissingCount").innerText = rep.missingInCalendar.length;
-          document.getElementById("auditMismatchCount").innerText = rep.mismatchedEvents.length;
-          
-          document.getElementById("dailyBriefingBadge").className = rep.triggersStatus.dailyBriefing.isInstalled ? "badge bg-success" : "badge bg-secondary";
-          document.getElementById("dailyBriefingBadge").innerText = rep.triggersStatus.dailyBriefing.isInstalled ? "已啟用 (08:00)" : "未啟用";
-
-          document.getElementById("weeklyAuditBadge").className = rep.triggersStatus.weeklyAudit.isInstalled ? "badge bg-success" : "badge bg-secondary";
-          document.getElementById("weeklyAuditBadge").innerText = rep.triggersStatus.weeklyAudit.isInstalled ? "已啟用 (週一 06:00)" : "未啟用";
-        })
-        .auditAndRepairCalendarSync(autoFix);
-    }
-
     function downloadExcelTemplate() {
       const currentYear = document.getElementById("yearFilter").value || "115";
       const headers = [["編號 (可留空)", "年度", "性質 (例行/繁星)", "工作項目 / 具體目標", "承辦起訖日期 (YYYYMMDDHHMM-YYYYMMDDHHMM)", "承辦與督導", "重要性", "備註標籤", "完成月份", "使用AI (是/否)", "最新進度", "審閱情形", "幹部檢視意見"]];
@@ -2045,7 +2034,6 @@
 
     function openImportModal() {
       document.getElementById("excelFileInput").value = "";
-      // Google 日曆同步已停用
       importModalInstance.show();
     }
 
@@ -2055,14 +2043,13 @@
         alert("請選擇欲匯入的 Excel 檔案！");
         return;
       }
-      const syncCal = false; // 只匯入系統資料
       const file = fileInput.files[0];
       const reader = new FileReader();
       const btn = document.getElementById("btnConfirmImport");
       btn.disabled = true;
       btn.innerHTML = `<span class="spinner-border spinner-border-sm me-1"></span>解析匯入中...`;
 
-      reader.onload = function(e) {
+      reader.onload = async function(e) {
         try {
           const data = new Uint8Array(e.target.result);
           const workbook = XLSX.read(data, { type: "array" });
@@ -2097,21 +2084,21 @@
             });
           }
 
-          google.script.run
-            .withSuccessHandler(res => {
-              btn.disabled = false;
-              btn.innerHTML = `<i class="fa-solid fa-upload me-1"></i>開始整筆匯入`;
-              importModalInstance.hide();
-              alert(`🎉 成功匯入 ${res.count} 筆歷史列管案件！` + (syncCal ? `\n📅 同步建立了 ${res.calendarCount} 筆日曆事件。` : ""));
-              loadTasks();
-            })
-            .withFailureHandler(err => {
-              btn.disabled = false;
-              btn.innerHTML = `<i class="fa-solid fa-upload me-1"></i>開始整筆匯入`;
-              alert("匯入失敗: " + err);
-            })
-            .batchImportHistoricalTasks(records, syncCal);
+          const res = await callGasApi("batchImportHistoricalTasks", {
+            records: records,
+            syncCalendar: false
+          }, "POST");
 
+          btn.disabled = false;
+          btn.innerHTML = `<i class="fa-solid fa-upload me-1"></i>開始整筆匯入`;
+
+          if (res && res.success) {
+            importModalInstance.hide();
+            alert(`🎉 成功匯入 ${res.count} 筆歷史列管案件！`);
+            loadTasks();
+          } else {
+            alert(res ? res.message : "匯入失敗");
+          }
         } catch (err) {
           btn.disabled = false;
           btn.innerHTML = `<i class="fa-solid fa-upload me-1"></i>開始整筆匯入`;
