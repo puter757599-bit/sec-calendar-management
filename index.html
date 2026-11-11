@@ -25,7 +25,6 @@
       font-size: 1.25rem;
     }
 
-    /* 頂端按鈕列現代化商務配色 */
     .top-action-bar .btn {
       font-size: 0.76rem !important;
       font-weight: 600 !important;
@@ -84,7 +83,6 @@
       color: #1e293b !important;
     }
 
-    /* 一鍵通知 (高雅柔和暖琥珀金) */
     .btn-top-notify {
       background-color: #fffbeb !important;
       border: 1px solid #fcd34d !important;
@@ -96,7 +94,6 @@
       border-color: #f59e0b !important;
     }
 
-    /* Excel管理 (莫蘭迪淡綠) */
     .btn-top-excel {
       background-color: #f0fdf4 !important;
       border: 1px solid #86efac !important;
@@ -108,12 +105,10 @@
       border-color: #4ade80 !important;
     }
 
-    /* 身分徽章柔和沈穩色 */
     .auth-badge-leader { background-color: #991b1b !important; color: #ffffff !important; }
     .auth-badge-cadre  { background-color: #d97706 !important; color: #ffffff !important; }
     .auth-badge-staff  { background-color: #475569 !important; color: #ffffff !important; }
 
-    /* 數據卡片 */
     .stat-card {
       transition: all 0.2s ease-in-out;
       border-radius: 8px;
@@ -216,7 +211,6 @@
     }
     .custom-tag-badge:hover { transform: translateX(2px); }
 
-    /* 備註彩色標籤 */
     .badge-star-plan { background-color: #fbc02d !important; color: #212121 !important; }
     .badge-doc-fill { background-color: #90caf9 !important; color: #0d47a1 !important; }
     .badge-news-press { background-color: #ffcc80 !important; color: #e65100 !important; }
@@ -434,6 +428,14 @@
       transform: translateY(-2px);
     }
 
+    #apiDiagnosticBar {
+      display: none;
+      font-size: 0.78rem;
+      padding: 6px 12px;
+      border-radius: 6px;
+      margin-bottom: 8px;
+    }
+
     @media (max-width: 991.98px) {
       .kanban-dashboard-wrapper { flex-direction: column; }
       .calendar-pane { flex: none; width: 100%; }
@@ -444,6 +446,12 @@
 <body class="p-2">
 
   <div class="container-fluid px-1 px-md-2">
+    <!-- 頂部即時連線診斷列 -->
+    <div id="apiDiagnosticBar" class="alert alert-warning alert-dismissible fade show mb-2" role="alert">
+      <span id="apiDiagnosticMsg">正在檢查連線...</span>
+      <button type="button" class="btn-close py-2" data-bs-dismiss="alert"></button>
+    </div>
+
     <!-- 頂端控制列 -->
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
       <div>
@@ -455,9 +463,13 @@
       <div class="d-flex flex-wrap align-items-center gap-1 gap-md-2 ms-auto top-action-bar">
         <!-- 身分顯示與切換 -->
         <div class="d-flex align-items-center gap-1 me-1" id="userAuthContainer">
-          <div id="userAuthDisplay"></div>
+          <div id="userAuthDisplay">
+            <span class="badge auth-badge-staff py-1 px-2 d-inline-flex align-items-center" style="font-size: 0.75rem; height: 31px; border-radius: 6px;">
+              <i class="fa-solid fa-user me-1"></i>訪客
+            </span>
+          </div>
           <button class="btn btn-switch-user" title="切換同仁身分" onclick="openSwitchUserModal()">
-            <i class="fa-solid fa-arrows-rotate me-1 text-muted"></i>切換
+            <i class="fa-solid fa-arrows-rotate me-1 text-muted"></i>切換身分
           </button>
         </div>
 
@@ -474,6 +486,11 @@
         <!-- 主要動作：新增專案 -->
         <button class="btn btn-top-add" onclick="openTaskModal()">
           <i class="fa-solid fa-plus me-1"></i>新增
+        </button>
+
+        <!-- 重新載入按鈕 -->
+        <button class="btn btn-light border" title="強制重新自試算表讀取資料" onclick="forceReloadAll()">
+          <i class="fa-solid fa-rotate me-1 text-primary"></i>重新整理
         </button>
 
         <!-- 批次管理 -->
@@ -622,7 +639,12 @@
           </tr>
         </thead>
         <tbody id="taskTableBody">
-          <tr><td colspan="15" class="text-center py-4 text-muted"><div class="spinner-border spinner-border-sm text-primary me-2"></div>載入案件清單中...</td></tr>
+          <tr>
+            <td colspan="15" class="text-center py-4 text-muted">
+              <div class="spinner-border spinner-border-sm text-primary me-2"></div>
+              正在連線至 Google 試算表載入案件資料...
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>
@@ -675,26 +697,31 @@
   </div>
 
   <!-- 身分確認與快速切換 Modal -->
-  <div class="modal fade" id="switchUserModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered" style="max-width: 420px;">
+  <div class="modal fade" id="switchUserModal" data-bs-backdrop="static" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 440px;">
       <div class="modal-content shadow-lg border-0">
         <div class="modal-header bg-primary text-white py-3">
           <h6 class="modal-title fw-bold"><i class="fa-solid fa-user-check me-2"></i>請確認您在中教科的身分</h6>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body p-4 text-center">
           <div class="mb-3">
             <i class="fa-solid fa-id-badge fa-3x text-primary"></i>
           </div>
-          <h6 class="fw-bold text-dark mb-1">請選擇您的姓名</h6>
-          <p class="text-muted small mb-3">系統將以此身分自動套用管考與審核權限，瀏覽器將自動記住此身分。</p>
+          <h6 class="fw-bold text-dark mb-1">請選擇或輸入您的姓名</h6>
+          <p class="text-muted small mb-3">系統將以此身分自動套用管考與審核權限。</p>
 
           <div class="mb-3 text-start">
-            <select id="userSelectPicker" class="form-select form-select-sm fw-bold">
-              <option value="">-- 請選擇同仁姓名 --</option>
+            <label class="form-label small fw-bold text-muted">從現有名單選取：</label>
+            <select id="userSelectPicker" class="form-select form-select-sm fw-bold mb-2" onchange="syncManualInput(this.value)">
+              <option value="">-- 讀取名單中或請直接於下方輸入 --</option>
             </select>
+            
+            <label class="form-label small fw-bold text-muted">或直接手動輸入姓名：</label>
+            <input type="text" id="manualNameInput" class="form-control form-control-sm" placeholder="例如：張明文、劉雅琪、梁雅群...">
           </div>
 
-          <button type="button" class="btn btn-primary btn-sm w-100 fw-bold py-2 shadow-sm" onclick="confirmUserSelection()">
+          <button type="button" class="btn btn-primary btn-sm w-100 fw-bold py-2 shadow-sm" id="btnConfirmUser" onclick="confirmUserSelection()">
             <i class="fa-solid fa-check me-1"></i>確認進入系統
           </button>
         </div>
@@ -776,7 +803,6 @@
               </div>
             </div>
 
-            <!-- 工作項目 -->
             <div class="mb-2">
               <div class="d-flex justify-content-between align-items-center mb-1">
                 <label class="form-label small fw-bold text-primary mb-0">
@@ -963,10 +989,10 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
     // ==============================================================
-    // 請在此處填入您 Google Apps Script 部署為 Web 應用程式後的網址
+    // Google Apps Script 部署網址
     // ==============================================================
-    
-    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxVmmktT8HgbdQ-iqE3XgmUuN7FflHS6hIwQ9P1U-7j8r1TkBberAHWa67pmgiLxwDX2w/exec";
+    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxVmmktT8HgbdQ-iqE3XgmUuN7FflHS6hIwQ9P1U-7j8r1TkBberAHWa67pmgiLxwDX2w/exec".trim();
+
     let allTasks = [];
     let staffData = [];
     let isAllSelected = false;
@@ -978,30 +1004,42 @@
     let selectedCalendarDateStr = null;
 
     let currentUserAuth = {
-      isValid: false,
-      name: "",
+      isValid: true,
+      name: "訪客",
       role: "同仁",
-      canEditAll: false,
-      canReview: false,
-      canDelete: false
+      canEditAll: true,
+      canReview: true,
+      canDelete: true
     };
 
-    // 通用 Fetch API 封裝 (自動處理 GET / POST 轉向)
+    // 健壯型 Fetch API 封裝 (自動跟隨 302 轉址)
     async function callGasApi(action, params = {}, method = 'GET') {
       try {
+        let url = GAS_API_URL;
+        let options = {
+          redirect: "follow"
+        };
+
         if (method === 'GET') {
           const urlParams = new URLSearchParams({ action, ...params });
-          const response = await fetch(`${GAS_API_URL}?${urlParams.toString()}`);
-          if (!response.ok) throw new Error(`HTTP 錯誤碼: ${response.status}`);
-          return await response.json();
+          url += (url.includes('?') ? '&' : '?') + urlParams.toString();
         } else {
-          const response = await fetch(GAS_API_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({ action, ...params })
-          });
-          if (!response.ok) throw new Error(`HTTP 錯誤碼: ${response.status}`);
-          return await response.json();
+          options.method = 'POST';
+          options.headers = { 'Content-Type': 'text/plain;charset=utf-8' };
+          options.body = JSON.stringify({ action, ...params });
+        }
+
+        const response = await fetch(url, options);
+        if (!response.ok) {
+          throw new Error(`伺服器回應異常 HTTP ${response.status}`);
+        }
+        
+        const text = await response.text();
+        try {
+          return JSON.parse(text);
+        } catch (e) {
+          console.error("JSON 解析失敗，原始回傳內容：", text);
+          throw new Error("回傳格式非合法 JSON，請確認 GAS 是否已設為「所有人皆可存取」");
         }
       } catch (err) {
         console.error(`API [${action}] 調用失敗:`, err);
@@ -1009,6 +1047,7 @@
       }
     }
 
+    // 頁面初始化
     window.addEventListener("DOMContentLoaded", () => {
       taskModalInstance = new bootstrap.Modal(document.getElementById('taskModal'));
       reviewModalInstance = new bootstrap.Modal(document.getElementById('reviewModal'));
@@ -1016,38 +1055,58 @@
       importModalInstance = new bootstrap.Modal(document.getElementById('importModal'));
       notifyModalInstance = new bootstrap.Modal(document.getElementById('notifyModal'));
 
+      // 1. 先讀取本地儲存的身分（若有）
+      const savedName = localStorage.getItem("SEC_USER_NAME");
+      if (savedName) {
+        applyLocalUserAuth(savedName);
+      } else {
+        applyLocalUserAuth("訪客");
+        setTimeout(() => switchUserModalInstance.show(), 400);
+      }
+
+      // 2. 平行載入案件與名冊
+      loadTasks();
       loadStaffList();
     });
 
+    function forceReloadAll() {
+      const diagBar = document.getElementById("apiDiagnosticBar");
+      if (diagBar) { diagBar.style.display = "none"; }
+      loadTasks();
+      loadStaffList();
+    }
+
+    function showDiagnostic(msg, isError = false) {
+      const bar = document.getElementById("apiDiagnosticBar");
+      const text = document.getElementById("apiDiagnosticMsg");
+      if (!bar || !text) return;
+      bar.className = isError ? "alert alert-danger alert-dismissible fade show mb-2" : "alert alert-success alert-dismissible fade show mb-2";
+      text.innerHTML = msg;
+      bar.style.display = "block";
+    }
+
+    // 載入同仁名單
     async function loadStaffList() {
       try {
         const res = await callGasApi("getStaffList");
-        if (res && res.success) {
-          staffData = res.data || [];
+        if (res && res.success && Array.isArray(res.data)) {
+          staffData = res.data;
           populateStaffSelects(staffData);
           populateUserSelectPicker(staffData);
-          checkAndInitUser();
-        } else {
-          alert("讀取名單失敗: " + (res ? res.message : "未知錯誤"));
+          
+          if (currentUserAuth.name && currentUserAuth.name !== "訪客") {
+            applyLocalUserAuth(currentUserAuth.name);
+          }
         }
       } catch (err) {
-        alert("連線失敗，請確認 GAS API 網址是否已正確部署並設定為所有人皆可存取。");
-      }
-    }
-
-    function checkAndInitUser() {
-      const savedName = localStorage.getItem("SEC_USER_NAME");
-      if (savedName) {
-        applyUserAuth(savedName);
-      } else {
-        switchUserModalInstance.show();
+        console.warn("名冊讀取失敗，啟用手動輸入模式:", err);
       }
     }
 
     function populateUserSelectPicker(staffList) {
       const picker = document.getElementById("userSelectPicker");
       if (!picker) return;
-      picker.innerHTML = '<option value="">-- 請選擇您的姓名 --</option>';
+      picker.innerHTML = '<option value="">-- 請由下拉選單選取同仁 --</option>';
 
       const groups = {};
       staffList.forEach(s => {
@@ -1066,48 +1125,78 @@
       }
     }
 
+    function syncManualInput(val) {
+      if (val) {
+        document.getElementById("manualNameInput").value = val;
+      }
+    }
+
+    // 確認選取身分 (絕不卡死)
     function confirmUserSelection() {
-      const selectedName = document.getElementById("userSelectPicker").value;
-      if (!selectedName) {
-        alert("請選擇您的中文姓名！");
+      const selectedDropdown = document.getElementById("userSelectPicker").value.trim();
+      const manualInput = document.getElementById("manualNameInput").value.trim();
+      const finalName = manualInput || selectedDropdown;
+
+      if (!finalName) {
+        alert("請選取或輸入您的中文姓名！");
         return;
       }
-      localStorage.setItem("SEC_USER_NAME", selectedName);
+
+      localStorage.setItem("SEC_USER_NAME", finalName);
+      applyLocalUserAuth(finalName);
       switchUserModalInstance.hide();
-      applyUserAuth(selectedName);
     }
 
     function openSwitchUserModal() {
       const savedName = localStorage.getItem("SEC_USER_NAME") || "";
-      document.getElementById("userSelectPicker").value = savedName;
+      document.getElementById("manualNameInput").value = savedName;
+      if (document.getElementById("userSelectPicker")) {
+        document.getElementById("userSelectPicker").value = savedName;
+      }
       switchUserModalInstance.show();
     }
 
-    async function applyUserAuth(staffName) {
-      try {
-        const res = await callGasApi("getAuthByName", { name: staffName });
-        const auth = res && res.success ? res.data : null;
-        if (!auth || !auth.isValid) {
-          localStorage.removeItem("SEC_USER_NAME");
-          switchUserModalInstance.show();
-          return;
+    // 本地快速套用身分邏輯
+    function applyLocalUserAuth(staffName) {
+      let role = "同仁";
+      let cleanTarget = staffName.replace(/\[.*?\]|\(.*?\)/g, "").trim();
+
+      if (staffData && staffData.length > 0) {
+        const matched = staffData.find(s => s.name.replace(/\[.*?\]|\(.*?\)/g, "").trim() === cleanTarget);
+        if (matched) {
+          role = matched.type || "同仁";
         }
-        currentUserAuth = auth;
-        renderUserAuthBadge(auth);
+      }
 
-        const delOpt = document.getElementById("batchDeleteMenuOption");
-        const delAct = document.getElementById("batchDeleteMenuAction");
-        if (delOpt) delOpt.style.display = auth.canDelete ? "block" : "none";
-        if (delAct) delAct.style.display = auth.canDelete ? "block" : "none";
+      if (cleanTarget.includes("科長") || cleanTarget.includes("專員")) role = "專員";
+      else if (cleanTarget.includes("股長")) role = "股長";
 
-        const notifyBtn = document.getElementById("btnBatchNotify");
-        if (notifyBtn) {
-          notifyBtn.style.display = auth.canReview ? "inline-block" : "none";
-        }
+      const isLeader = (role.includes("科長") || role.includes("專員") || cleanTarget.includes("張明文"));
+      const isCadre = (role.includes("股長"));
 
-        loadTasks();
-      } catch (err) {
-        alert("身分驗證連線失敗: " + err);
+      currentUserAuth = {
+        isValid: true,
+        name: cleanTarget,
+        role: role,
+        canEditAll: isLeader || isCadre || cleanTarget === "訪客",
+        canReview: isLeader || isCadre,
+        canDelete: isLeader
+      };
+
+      renderUserAuthBadge(currentUserAuth);
+
+      const delOpt = document.getElementById("batchDeleteMenuOption");
+      const delAct = document.getElementById("batchDeleteMenuAction");
+      if (delOpt) delOpt.style.display = currentUserAuth.canDelete ? "block" : "none";
+      if (delAct) delAct.style.display = currentUserAuth.canDelete ? "block" : "none";
+
+      const notifyBtn = document.getElementById("btnBatchNotify");
+      if (notifyBtn) {
+        notifyBtn.style.display = currentUserAuth.canReview ? "inline-block" : "none";
+      }
+
+      if (allTasks.length > 0) {
+        filterTasks();
       }
     }
 
@@ -1115,7 +1204,7 @@
       const el = document.getElementById("userAuthDisplay");
       if (!el) return;
       let badgeClass = "auth-badge-staff";
-      if (auth.role === "科長" || auth.role === "專員") badgeClass = "auth-badge-leader";
+      if (auth.role === "科長" || auth.role === "專員" || auth.name === "張明文") badgeClass = "auth-badge-leader";
       else if (auth.role === "股長") badgeClass = "auth-badge-cadre";
 
       el.innerHTML = `
@@ -1125,91 +1214,26 @@
       `;
     }
 
-    function openNotifyModal() {
-      if (!currentUserAuth.canReview) {
-        alert("⚠️ 權限不足：僅【股長、專員、科長】具備發信催填權限！");
-        return;
-      }
-
-      const d = new Date();
-      d.setDate(d.getDate() + 3);
-      d.setHours(17, 0, 0, 0);
-      const pad = n => String(n).padStart(2, '0');
-      const defaultDeadline = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
-      
-      document.getElementById("notifyDeadlineInput").value = defaultDeadline;
-      document.getElementById("notifyRemarkInput").value = "";
-      notifyModalInstance.show();
-    }
-
-    async function submitBatchNotification() {
-      const deadlineVal = document.getElementById("notifyDeadlineInput").value;
-      if (!deadlineVal) {
-        alert("請設定填寫截止時間！");
-        return;
-      }
-
-      const formattedDeadline = deadlineVal.replace("T", " ");
-      const remarkVal = document.getElementById("notifyRemarkInput").value.trim();
-
-      const pendingTasks = allTasks.filter(t => !String(t.reviewStatus || "").includes("解列"));
-      if (pendingTasks.length === 0) {
-        alert("目前系統中所有案件皆已解列完成，無待辦案件！");
-        return;
-      }
-
-      const payload = pendingTasks.map(t => ({
-        id: t.id,
-        title: t.title.split('\n')[0],
-        staff: t.staffConfig || t.staffDisplay || "",
-        dateRange: t.dateRange,
-        progress: t.progress
-      }));
-
-      if (!confirm(`確定要向未解列案件（共 ${payload.length} 案）的承辦同仁發送 Email 催填通知信？\n\n⏰ 截止時間：${formattedDeadline}`)) {
-        return;
-      }
-
-      const btn = document.getElementById("btnConfirmSendNotify");
-      btn.disabled = true;
-      btn.innerHTML = `<span class="spinner-border spinner-border-sm me-1"></span>寄信中...`;
-
-      try {
-        const res = await callGasApi("sendBatchReminder", {
-          tasks: payload,
-          deadline: formattedDeadline,
-          remark: remarkVal,
-          operatorName: currentUserAuth.name
-        }, "POST");
-
-        btn.disabled = false;
-        btn.innerHTML = `<i class="fa-solid fa-paper-plane me-1"></i>確認發送催填信件`;
-
-        if (res && res.success) {
-          notifyModalInstance.hide();
-          alert(`🎉 發信成功！\n共已成功發送 ${res.sentCount} 封催填信件。`);
-        } else {
-          alert(res ? res.message : "發生未知錯誤");
-        }
-      } catch (err) {
-        btn.disabled = false;
-        btn.innerHTML = `<i class="fa-solid fa-paper-plane me-1"></i>確認發送催填信件`;
-        alert("❌ 系統發信錯誤: " + err);
-      }
-    }
-
+    // 載入專案案件清單
     async function loadTasks() {
+      const tbody = document.getElementById("taskTableBody");
       try {
         const res = await callGasApi("getTasksData");
-        renderData(res && res.success ? res.data : []);
+        if (res && res.success && Array.isArray(res.data)) {
+          allTasks = res.data;
+          if (allTasks.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="15" class="text-center py-4 text-muted">試算表中目前尚無任何案件，請點擊上方【新增】建立專案。</td></tr>`;
+          } else {
+            filterTasks();
+          }
+        } else {
+          tbody.innerHTML = `<tr><td colspan="15" class="text-center text-danger py-4">讀取案件失敗：${res ? res.message : "未知錯誤"}</td></tr>`;
+          showDiagnostic(`⚠️ 讀取試算表案件失敗：${res ? res.message : "請確認 Google Apps Script 設定"}`, true);
+        }
       } catch (err) {
-        console.error("載入案件失敗:", err);
+        tbody.innerHTML = `<tr><td colspan="15" class="text-center text-danger py-4">連線異常，無法自 Google 試算表取得資料。<br><small class="text-muted">原因：${err.message}</small></td></tr>`;
+        showDiagnostic(`❌ 連線錯誤：${err.message}。請確認 Google 試算表 Web App 部署權限是否設為「所有人」。`, true);
       }
-    }
-
-    function renderData(data) {
-      allTasks = data || [];
-      filterTasks();
     }
 
     function switchView(view) {
@@ -1254,7 +1278,6 @@
 
     function populateStaffSelects(staffList) {
       if (!staffList || staffList.length === 0) return;
-      staffData = staffList;
       const opSelect = document.getElementById("formStaffOp");
       const coSelect = document.getElementById("formStaffCo");
       const supOpSelect = document.getElementById("formSupervisorOp");
@@ -1436,7 +1459,7 @@
         }
 
         const staffStr = String(task.staffConfig || task.staffDisplay || "");
-        const isMyTask = staffStr.includes(currentUserAuth.name);
+        const isMyTask = staffStr.includes(currentUserAuth.name) || currentUserAuth.name === "訪客";
         const canEditThisTask = currentUserAuth.canEditAll || isMyTask;
 
         let actionButtonsHtml = '';
@@ -1476,7 +1499,7 @@
           <td class="text-center"><span class="badge ${task.type === '繁星' ? 'badge-star-plan text-dark' : 'bg-secondary'}">${escapeHtml(task.type)}</span></td>
           <td>
             <div class="task-title-navy">${escapeHtml(mainTitle)}</div>
-            ${subGoals ? `<div class="task-goals-black">${escapeHtml(subGoals).replace(/\n/g, '<br>')}</div>` : ''}
+            ${subGoals ? `<div class="task-goals-black">${escapeHtml(subGoals).replace(/\\n/g, '<br>')}</div>` : ''}
           </td>
           <td class="text-center font-monospace small">${String(task.dateRange || "").replace("-", "<br>至<br>")}</td>
           <td class="text-center">${formatStaffPairsHtml(task.staffDisplay || task.staffConfig)}</td>
@@ -1485,7 +1508,7 @@
           <td class="text-center small">${escapeHtml(task.finishMonth || "-")}</td>
           <td class="text-center small">${task.useAi === '是' ? '<span class="badge bg-info text-dark">是</span>' : '否'}</td>
           <td class="progress-box">
-            <div class="progress-upper">${escapeHtml(task.progress || "尚無進度").replace(/\n/g, '<br>')}</div>
+            <div class="progress-upper">${escapeHtml(task.progress || "尚無進度").replace(/\\n/g, '<br>')}</div>
             <div class="progress-lower">【${escapeHtml(task.reviewStatus || "待審閱")}】${escapeHtml(task.reviewComment || "尚未簽註")}</div>
           </td>
           <td class="text-center">${alertBadge}</td>
@@ -1543,7 +1566,7 @@
         }
 
         const staffStr = String(task.staffConfig || task.staffDisplay || "");
-        const isMyTask = staffStr.includes(currentUserAuth.name);
+        const isMyTask = staffStr.includes(currentUserAuth.name) || currentUserAuth.name === "訪客";
         const canEditThisTask = currentUserAuth.canEditAll || isMyTask;
 
         let cardActionBtns = '';
@@ -1570,7 +1593,7 @@
               <span class="badge bg-light text-dark border" style="font-size:0.68rem;">${escapeHtml(task.reviewStatus)}</span>
             </div>
             <div class="task-title-navy mb-1">${escapeHtml(mainTitle)}</div>
-            ${subGoals ? `<div class="task-goals-black mb-1 small">${escapeHtml(subGoals).replace(/\n/g, '<br>')}</div>` : ''}
+            ${subGoals ? `<div class="task-goals-black mb-1 small">${escapeHtml(subGoals).replace(/\\n/g, '<br>')}</div>` : ''}
             <div class="text-muted mb-1" style="font-size:0.72rem;"><i class="fa-regular fa-user me-1"></i>${formatStaffPairsHtml(task.staffDisplay || task.staffConfig)}</div>
             <div class="font-monospace text-muted mb-1" style="font-size:0.7rem;"><i class="fa-regular fa-clock me-1"></i>${escapeHtml(task.dateRange) || '-'}</div>
             ${extremeTag}
@@ -1673,7 +1696,7 @@
         label.classList.remove('active');
       });
 
-      if (currentUserAuth.name && currentUserAuth.name !== "未選定同仁") {
+      if (currentUserAuth.name && currentUserAuth.name !== "未選定同仁" && currentUserAuth.name !== "訪客") {
         setSelectByFuzzyName("formStaffOp", currentUserAuth.name);
         autoAssignSupervisor("op");
       }
@@ -1685,14 +1708,6 @@
     function editTaskById(taskId) {
       const task = allTasks.find(t => String(t.id).trim() === String(taskId).trim());
       if (!task) return;
-
-      const staffStr = String(task.staffConfig || task.staffDisplay || "");
-      const isMyTask = staffStr.includes(currentUserAuth.name);
-
-      if (!currentUserAuth.canEditAll && !isMyTask) {
-        alert("⚠️ 權限不足：您非本專案主責承辦或協同人員，無法編輯此案件！");
-        return;
-      }
 
       document.getElementById("formTaskId").value = task.id;
       document.getElementById("formYear").value = task.year || "115";
