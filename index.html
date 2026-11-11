@@ -989,7 +989,7 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
     // ==============================================================
-    // Google Apps Script 部署網址
+    // Google Apps Script 部署網址 (已自動清理字串兩端空白)
     // ==============================================================
     const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxVmmktT8HgbdQ-iqE3XgmUuN7FflHS6hIwQ9P1U-7j8r1TkBberAHWa67pmgiLxwDX2w/exec".trim();
 
@@ -1064,7 +1064,7 @@
         setTimeout(() => switchUserModalInstance.show(), 400);
       }
 
-      // 2. 平行載入案件與名冊
+      // 2. 平行載入專案案件與同仁名冊
       loadTasks();
       loadStaffList();
     });
@@ -1156,7 +1156,7 @@
       switchUserModalInstance.show();
     }
 
-    // 本地快速套用身分邏輯
+    // 本地快速套用身分邏輯 (無需等待網路即時套用)
     function applyLocalUserAuth(staffName) {
       let role = "同仁";
       let cleanTarget = staffName.replace(/\[.*?\]|\(.*?\)/g, "").trim();
@@ -1234,6 +1234,61 @@
         tbody.innerHTML = `<tr><td colspan="15" class="text-center text-danger py-4">連線異常，無法自 Google 試算表取得資料。<br><small class="text-muted">原因：${err.message}</small></td></tr>`;
         showDiagnostic(`❌ 連線錯誤：${err.message}。請確認 Google 試算表 Web App 部署權限是否設為「所有人」。`, true);
       }
+    }
+
+    function submitBatchNotification() {
+      const deadlineVal = document.getElementById("notifyDeadlineInput").value;
+      if (!deadlineVal) {
+        alert("請設定填寫截止時間！");
+        return;
+      }
+
+      const formattedDeadline = deadlineVal.replace("T", " ");
+      const remarkVal = document.getElementById("notifyRemarkInput").value.trim();
+
+      const pendingTasks = allTasks.filter(t => !String(t.reviewStatus || "").includes("解列"));
+      if (pendingTasks.length === 0) {
+        alert("目前系統中所有案件皆已解列完成，無待辦案件！");
+        return;
+      }
+
+      const payload = pendingTasks.map(t => ({
+        id: t.id,
+        title: (t.title || "").split('\n')[0],
+        staff: t.staffConfig || t.staffDisplay || "",
+        dateRange: t.dateRange,
+        progress: t.progress
+      }));
+
+      if (!confirm(`確定要向未解列案件（共 ${payload.length} 案）的承辦同仁發送 Email 催填通知信？\n\n⏰ 截止時間：${formattedDeadline}`)) {
+        return;
+      }
+
+      const btn = document.getElementById("btnConfirmSendNotify");
+      btn.disabled = true;
+      btn.innerHTML = `<span class="spinner-border spinner-border-sm me-1"></span>寄信中...`;
+
+      callGasApi("sendBatchReminder", {
+        tasks: payload,
+        deadline: formattedDeadline,
+        remark: remarkVal,
+        operatorName: currentUserAuth.name
+      }, "POST")
+      .then(res => {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fa-solid fa-paper-plane me-1"></i>確認發送催填信件`;
+        if (res && res.success) {
+          notifyModalInstance.hide();
+          alert(`🎉 發信成功！\n共已成功發送 ${res.sentCount} 封催填信件。`);
+        } else {
+          alert(res ? res.message : "發生未知錯誤");
+        }
+      })
+      .catch(err => {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fa-solid fa-paper-plane me-1"></i>確認發送催填信件`;
+        alert("❌ 系統發信錯誤: " + err);
+      });
     }
 
     function switchView(view) {
@@ -1499,7 +1554,7 @@
           <td class="text-center"><span class="badge ${task.type === '繁星' ? 'badge-star-plan text-dark' : 'bg-secondary'}">${escapeHtml(task.type)}</span></td>
           <td>
             <div class="task-title-navy">${escapeHtml(mainTitle)}</div>
-            ${subGoals ? `<div class="task-goals-black">${escapeHtml(subGoals).replace(/\\n/g, '<br>')}</div>` : ''}
+            ${subGoals ? `<div class="task-goals-black">${escapeHtml(subGoals).replace(/\n/g, '<br>')}</div>` : ''}
           </td>
           <td class="text-center font-monospace small">${String(task.dateRange || "").replace("-", "<br>至<br>")}</td>
           <td class="text-center">${formatStaffPairsHtml(task.staffDisplay || task.staffConfig)}</td>
@@ -1508,7 +1563,7 @@
           <td class="text-center small">${escapeHtml(task.finishMonth || "-")}</td>
           <td class="text-center small">${task.useAi === '是' ? '<span class="badge bg-info text-dark">是</span>' : '否'}</td>
           <td class="progress-box">
-            <div class="progress-upper">${escapeHtml(task.progress || "尚無進度").replace(/\\n/g, '<br>')}</div>
+            <div class="progress-upper">${escapeHtml(task.progress || "尚無進度").replace(/\n/g, '<br>')}</div>
             <div class="progress-lower">【${escapeHtml(task.reviewStatus || "待審閱")}】${escapeHtml(task.reviewComment || "尚未簽註")}</div>
           </td>
           <td class="text-center">${alertBadge}</td>
@@ -1593,7 +1648,7 @@
               <span class="badge bg-light text-dark border" style="font-size:0.68rem;">${escapeHtml(task.reviewStatus)}</span>
             </div>
             <div class="task-title-navy mb-1">${escapeHtml(mainTitle)}</div>
-            ${subGoals ? `<div class="task-goals-black mb-1 small">${escapeHtml(subGoals).replace(/\\n/g, '<br>')}</div>` : ''}
+            ${subGoals ? `<div class="task-goals-black mb-1 small">${escapeHtml(subGoals).replace(/\n/g, '<br>')}</div>` : ''}
             <div class="text-muted mb-1" style="font-size:0.72rem;"><i class="fa-regular fa-user me-1"></i>${formatStaffPairsHtml(task.staffDisplay || task.staffConfig)}</div>
             <div class="font-monospace text-muted mb-1" style="font-size:0.7rem;"><i class="fa-regular fa-clock me-1"></i>${escapeHtml(task.dateRange) || '-'}</div>
             ${extremeTag}
