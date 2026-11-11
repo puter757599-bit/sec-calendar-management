@@ -1,0 +1,2146 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <title>中教科-重要行事曆暨繁星計畫</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+  <style>
+    :root {
+      --primary-color: #3b36a6;
+      --navy-blue: #1a365d;
+    }
+    body {
+      background-color: #f4f6fa;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans TC", sans-serif;
+      overflow-x: hidden;
+    }
+
+    .app-header {
+      color: var(--primary-color);
+      font-weight: 700;
+      font-size: 1.25rem;
+    }
+
+    /* 頂端按鈕列現代化商務配色 */
+    .top-action-bar .btn {
+      font-size: 0.76rem !important;
+      font-weight: 600 !important;
+      border-radius: 6px !important;
+      padding: 4px 10px !important;
+      height: 31px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      transition: all 0.18s ease-in-out !important;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+    }
+    .top-action-bar .btn:hover {
+      transform: translateY(-1px) !important;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.08) !important;
+    }
+
+    .btn-switch-user {
+      background-color: #f1f5f9 !important;
+      border: 1px solid #cbd5e1 !important;
+      color: #475569 !important;
+    }
+    .btn-switch-user:hover {
+      background-color: #e2e8f0 !important;
+      color: #1e293b !important;
+    }
+
+    .btn-view-toggle {
+      border: 1px solid #cbd5e1 !important;
+      color: #475569 !important;
+      background-color: #ffffff !important;
+    }
+    .btn-view-toggle.active {
+      background-color: #3b36a6 !important;
+      border-color: #3b36a6 !important;
+      color: #ffffff !important;
+    }
+
+    .btn-top-add {
+      background-color: #3b36a6 !important;
+      border: 1px solid #3b36a6 !important;
+      color: #ffffff !important;
+    }
+    .btn-top-add:hover {
+      background-color: #312c8a !important;
+      border-color: #312c8a !important;
+    }
+
+    .btn-top-batch {
+      background-color: #ffffff !important;
+      border: 1px solid #cbd5e1 !important;
+      color: #475569 !important;
+    }
+    .btn-top-batch:hover {
+      background-color: #f8fafc !important;
+      color: #1e293b !important;
+    }
+
+    /* 一鍵通知 (高雅柔和暖琥珀金) */
+    .btn-top-notify {
+      background-color: #fffbeb !important;
+      border: 1px solid #fcd34d !important;
+      color: #b45309 !important;
+    }
+    .btn-top-notify:hover {
+      background-color: #fef3c7 !important;
+      color: #92400e !important;
+      border-color: #f59e0b !important;
+    }
+
+    /* Excel管理 (莫蘭迪淡綠) */
+    .btn-top-excel {
+      background-color: #f0fdf4 !important;
+      border: 1px solid #86efac !important;
+      color: #166534 !important;
+    }
+    .btn-top-excel:hover {
+      background-color: #dcfce7 !important;
+      color: #14532d !important;
+      border-color: #4ade80 !important;
+    }
+
+    /* 系統校核 (石板霧灰) */
+    .btn-top-audit {
+      background-color: #f8fafc !important;
+      border: 1px solid #cbd5e1 !important;
+      color: #334155 !important;
+    }
+    .btn-top-audit:hover {
+      background-color: #f1f5f9 !important;
+      color: #0f172a !important;
+      border-color: #94a3b8 !important;
+    }
+
+    /* 身分徽章柔和沈穩色 */
+    .auth-badge-leader { background-color: #991b1b !important; color: #ffffff !important; }
+    .auth-badge-cadre  { background-color: #d97706 !important; color: #ffffff !important; }
+    .auth-badge-staff  { background-color: #475569 !important; color: #ffffff !important; }
+
+    /* 數據卡片 */
+    .stat-card {
+      transition: all 0.2s ease-in-out;
+      border-radius: 8px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .stat-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+    }
+    .stat-card.active-filter {
+      outline: 2.5px solid var(--primary-color) !important;
+      background-color: #f0f4ff !important;
+    }
+
+    .table-container {
+      background: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+      max-height: calc(100vh - 230px);
+      overflow-y: auto;
+      overflow-x: auto;
+    }
+
+    .table-responsive-custom {
+      width: 100%;
+      margin-bottom: 0;
+    }
+
+    .table-custom-header th {
+      background-color: var(--primary-color) !important;
+      color: #ffffff !important;
+      font-weight: 600;
+      vertical-align: middle;
+      text-align: center;
+      padding: 7px 5px;
+      font-size: 0.82rem;
+      border: none;
+      white-space: nowrap;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .table-responsive-custom td {
+      padding: 5px;
+      font-size: 0.8rem;
+      vertical-align: middle;
+    }
+
+    tr.table-archived-row td {
+      background-color: #f1f5f9 !important;
+      color: #64748b !important;
+    }
+
+    .task-title-navy {
+      color: var(--navy-blue) !important;
+      font-weight: 700 !important;
+      font-size: 0.86rem !important;
+      margin-bottom: 2px;
+      line-height: 1.35;
+    }
+    .task-goals-black {
+      color: #1f2937 !important;
+      font-weight: 500 !important;
+      font-size: 0.79rem !important;
+      line-height: 1.4;
+      white-space: pre-line;
+    }
+
+    .staff-pair-line {
+      display: block;
+      font-weight: 600;
+      color: #2b6cb0;
+      margin-bottom: 1px;
+      white-space: nowrap;
+    }
+
+    .vertical-tag-list {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      align-items: flex-start;
+      min-width: 95px;
+    }
+
+    .custom-tag-badge {
+      display: inline-flex;
+      align-items: center;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+      padding: 2px 8px;
+      border-radius: 50rem;
+      white-space: nowrap;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.12s ease-in-out;
+    }
+    .custom-tag-badge:hover { transform: translateX(2px); }
+
+    /* 備註彩色標籤 */
+    .badge-star-plan { background-color: #fbc02d !important; color: #212121 !important; }
+    .badge-doc-fill { background-color: #90caf9 !important; color: #0d47a1 !important; }
+    .badge-news-press { background-color: #ffcc80 !important; color: #e65100 !important; }
+    .badge-vip-schedule { background-color: #e91e63 !important; color: #ffffff !important; }
+    .badge-major-project { background-color: #a5d6a7 !important; color: #1b5e20 !important; }
+    .badge-ntpc-bar { background-color: #ede9fe !important; color: #6d28d9 !important; border: 1px solid #ddd6fe !important; }
+    .badge-public-care { background-color: #e0f2fe !important; color: #0369a1 !important; border: 1px solid #bae6fd !important; }
+    .badge-reps-care { background-color: #fff3e0 !important; color: #c2410c !important; border: 1px solid #ffe0b2 !important; }
+    .badge-default-tag { background-color: #e2e8f0 !important; color: #475569 !important; }
+
+    .form-pill-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 4px;
+    }
+    .form-pill-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: 50rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      user-select: none;
+      opacity: 0.45;
+      filter: grayscale(40%);
+      transition: all 0.15s ease-in-out;
+    }
+    .form-pill-label input[type="checkbox"] { display: none; }
+    .form-pill-label.active {
+      opacity: 1;
+      filter: grayscale(0%);
+      transform: scale(1.02);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+    }
+
+    .progress-box { font-size: 0.78rem; line-height: 1.35; }
+    .progress-upper {
+      color: #212529;
+      font-weight: 500;
+      margin-bottom: 3px;
+      word-break: break-all;
+      white-space: pre-line;
+    }
+    .progress-lower {
+      background-color: #f8f9fa;
+      border-radius: 4px;
+      padding: 3px 5px;
+      font-size: 0.73rem;
+      color: #495057;
+      border-left: 3px solid var(--primary-color);
+      word-break: break-all;
+    }
+
+    .vertical-action-group {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 3px !important;
+      width: 100% !important;
+      min-width: 95px !important;
+      max-width: 110px !important;
+      margin: 0 auto;
+    }
+    .vertical-action-group .btn {
+      width: 100% !important;
+      padding: 2px 5px !important;
+      font-size: 0.72rem !important;
+      line-height: 1.2 !important;
+      white-space: nowrap !important;
+      display: inline-flex !important;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      border-radius: 4px !important;
+    }
+
+    .auto-expand-textarea {
+      min-height: 80px;
+      max-height: 240px;
+      overflow-y: auto !important;
+      resize: vertical;
+      line-height: 1.5;
+    }
+
+    .extreme-countdown-pulse {
+      background-color: #ffebee;
+      border: 1px solid #d32f2f;
+      border-radius: 50rem;
+      padding: 1px 7px;
+      display: inline-block;
+      font-weight: 700;
+      color: #b71c1c;
+      font-size: 0.72rem;
+    }
+
+    .kanban-dashboard-wrapper {
+      display: flex;
+      gap: 12px;
+      width: 100%;
+      align-items: stretch;
+      min-height: calc(100vh - 240px);
+    }
+    .calendar-pane {
+      flex: 0 0 280px;
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 10px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      display: flex;
+      flex-direction: column;
+    }
+    .mini-calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: var(--primary-color);
+    }
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+      text-align: center;
+    }
+    .cal-day-header {
+      font-size: 0.75rem;
+      font-weight: bold;
+      color: #718096;
+      padding-bottom: 3px;
+    }
+    .cal-day-cell {
+      font-size: 0.8rem;
+      padding: 6px 2px;
+      border-radius: 6px;
+      cursor: pointer;
+      position: relative;
+      background-color: #f8fafc;
+      transition: all 0.15s ease-in-out;
+      border: 1px solid transparent;
+      user-select: none;
+    }
+    .cal-day-cell:hover { background-color: #e2e8f0; }
+    .cal-day-cell.today {
+      border: 1.5px solid var(--primary-color) !important;
+      font-weight: bold;
+    }
+    .cal-day-cell.has-task {
+      background-color: #e0edff !important;
+      color: #1a56db !important;
+      font-weight: 700 !important;
+      border: 1px solid #b8d5ff !important;
+    }
+    .cal-day-cell.selected {
+      background-color: var(--primary-color) !important;
+      color: #ffffff !important;
+      border-color: var(--primary-color) !important;
+    }
+    .kanban-main-pane {
+      flex: 1;
+      display: flex;
+      gap: 12px;
+      overflow: hidden;
+    }
+    .kanban-month-box {
+      flex: 1;
+      background: #edf2f7;
+      border-radius: 8px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      min-width: 0;
+    }
+    .kanban-box-header {
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 0.88rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .header-current-month {
+      background: linear-gradient(135deg, #3b36a6 0%, #4f46e5 100%);
+      color: #ffffff;
+    }
+    .header-next-month {
+      background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 100%);
+      color: #ffffff;
+    }
+    .kanban-cards-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding-right: 4px;
+      scroll-behavior: smooth;
+    }
+    .kanban-card {
+      background: #ffffff;
+      border-radius: 6px;
+      padding: 9px;
+      margin-bottom: 7px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+      border-left: 4px solid var(--primary-color);
+      font-size: 0.78rem;
+      transition: all 0.25s ease-in-out;
+    }
+    .kanban-card.card-targeted {
+      outline: 2.5px solid #3b36a6 !important;
+      box-shadow: 0 0 12px rgba(59, 54, 166, 0.45) !important;
+      background-color: #f0f4ff !important;
+      transform: translateY(-2px);
+    }
+
+    @media (max-width: 991.98px) {
+      .kanban-dashboard-wrapper { flex-direction: column; }
+      .calendar-pane { flex: none; width: 100%; }
+      .kanban-main-pane { flex-direction: column; }
+    }
+  </style>
+</head>
+<body class="p-2">
+
+  <div class="container-fluid px-1 px-md-2">
+    <!-- 頂端控制列：標題在左，身分標籤與微調後的精緻商務色系按鈕水平齊平 -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+      <div>
+        <h4 class="app-header mb-0">
+          <i class="fa-solid fa-graduation-cap me-1"></i>中教科-重要行事曆暨繁星計畫
+        </h4>
+      </div>
+
+      <div class="d-flex flex-wrap align-items-center gap-1 gap-md-2 ms-auto top-action-bar">
+        <!-- 身分顯示與切換 -->
+        <div class="d-flex align-items-center gap-1 me-1" id="userAuthContainer">
+          <div id="userAuthDisplay"></div>
+          <button class="btn btn-switch-user" title="切換同仁身分" onclick="openSwitchUserModal()">
+            <i class="fa-solid fa-arrows-rotate me-1 text-muted"></i>切換
+          </button>
+        </div>
+
+        <!-- 視圖切換 (表格 / 日曆) -->
+        <div class="btn-group">
+          <button id="btnTableView" class="btn btn-view-toggle active" onclick="switchView('table')">
+            <i class="fa-solid fa-table-list me-1"></i>表格
+          </button>
+          <button id="btnKanbanView" class="btn btn-view-toggle" onclick="switchView('kanban')">
+            <i class="fa-solid fa-calendar-days me-1"></i>日曆模式
+          </button>
+        </div>
+
+        <!-- 主要動作：新增專案 -->
+        <button class="btn btn-top-add" onclick="openTaskModal()">
+          <i class="fa-solid fa-plus me-1"></i>新增
+        </button>
+
+        <!-- 批次管理 -->
+        <div class="btn-group" id="batchManageGroup">
+          <button class="btn btn-top-batch dropdown-toggle" type="button" data-bs-toggle="dropdown">
+            <i class="fa-regular fa-square-check me-1 text-secondary"></i>批次管理
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="font-size: 0.8rem;">
+            <li><a class="dropdown-item" href="javascript:void(0)" onclick="selectByType('繁星')">僅勾選【繁星】</a></li>
+            <li><a class="dropdown-item" href="javascript:void(0)" onclick="selectByType('例行')">僅勾選【例行】</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="javascript:void(0)" onclick="toggleSelectAll()">全選 / 取消</a></li>
+            <li id="batchDeleteMenuOption" style="display: none;"><hr class="dropdown-divider"></li>
+            <li id="batchDeleteMenuAction" style="display: none;">
+              <a class="dropdown-item text-danger fw-bold" href="javascript:void(0)" onclick="deleteSelectedTasks()">移入回收桶</a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 幹部專屬：一鍵通知 (高雅柔和暖金) -->
+        <button class="btn btn-top-notify" id="btnBatchNotify" style="display: none;" onclick="openNotifyModal()">
+          <i class="fa-solid fa-bell me-1"></i>一鍵通知
+        </button>
+
+        <!-- Excel管理 (柔和淡綠) -->
+        <div class="btn-group">
+          <button class="btn btn-top-excel dropdown-toggle" type="button" data-bs-toggle="dropdown">
+            <i class="fa-solid fa-file-excel me-1"></i>Excel管理
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="font-size: 0.8rem;">
+            <li><a class="dropdown-item" href="javascript:void(0)" onclick="downloadExcelTemplate()">下載標準匯入檔案</a></li>
+            <li><a class="dropdown-item" href="javascript:void(0)" onclick="openImportModal()">批次匯入歷史案件</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="javascript:void(0)" onclick="exportSelectedTasksToExcel()">匯出勾選之資料</a></li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 緊湊型儀表板數據卡片 -->
+    <div class="row g-2 mb-2">
+      <div class="col-6 col-lg-3">
+        <div id="cardTotalTasks" class="card p-2 border-0 shadow-sm bg-white border-start border-4 border-primary stat-card h-100" onclick="quickFilterStatus('全部')">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <div class="text-muted" style="font-size: 0.72rem;"><span id="statYearLabel1"></span>專案總數</div>
+              <h5 class="fw-bold mb-0 text-dark" id="statTotalTasks">0</h5>
+            </div>
+            <i class="fa-solid fa-folder-tree fa-lg text-primary opacity-50"></i>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div id="cardAiTasks" class="card p-2 border-0 shadow-sm bg-white border-start border-4 border-info stat-card h-100" onclick="quickFilterStatus('AI')">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <div class="text-muted" style="font-size: 0.72rem;"><span id="statYearLabel2"></span>AI 導入率</div>
+              <h5 class="fw-bold mb-0 text-info" id="statAiRate">0%</h5>
+            </div>
+            <i class="fa-solid fa-robot fa-lg text-info opacity-50"></i>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div id="cardExtremeTasks" class="card p-2 border-0 shadow-sm bg-white border-start border-4 border-danger stat-card h-100" onclick="quickFilterStatus('極重要')">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <div class="text-muted" style="font-size: 0.72rem;"><span id="statYearLabel3"></span>繁星極重要</div>
+              <h5 class="fw-bold mb-0 text-danger" id="statExtremeTasks">0</h5>
+            </div>
+            <i class="fa-solid fa-fire fa-lg text-danger opacity-50"></i>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div id="cardArchivedTasks" class="card p-2 border-0 shadow-sm bg-white border-start border-4 border-success stat-card h-100" onclick="quickFilterStatus('解列')">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <div class="text-muted" style="font-size: 0.72rem;"><span id="statYearLabel4"></span>已解列/完成</div>
+              <h5 class="fw-bold mb-0 text-success" id="statArchivedTasks">0</h5>
+            </div>
+            <i class="fa-solid fa-circle-check fa-lg text-success opacity-50"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 篩選列 -->
+    <div class="card p-2 border-0 shadow-sm mb-2">
+      <div class="row g-2 align-items-center">
+        <div class="col-6 col-md-2">
+          <select id="yearFilter" class="form-select form-select-sm fw-bold text-primary" onchange="filterTasks()">
+            <option value="">全部年度</option>
+            <option value="115" selected>115年度</option>
+            <option value="116">116年度</option>
+            <option value="117">117年度</option>
+          </select>
+        </div>
+        <div class="col-6 col-md-2">
+          <select id="typeFilter" class="form-select form-select-sm" onchange="filterTasks()">
+            <option value="">全部性質</option>
+            <option value="繁星">繁星計畫</option>
+            <option value="例行">例行業務</option>
+          </select>
+        </div>
+        <div class="col-12 col-md-5">
+          <input type="text" id="searchInput" class="form-control form-control-sm" placeholder="關鍵字搜尋（目標、人員、進度、意見）..." oninput="filterTasks()">
+        </div>
+        <div class="col-12 col-md-3">
+          <select id="tagFilter" class="form-select form-select-sm" onchange="filterTasks()">
+            <option value="">全部備註標籤</option>
+            <option value="繁星計畫">繁星計畫</option>
+            <option value="公文填報">公文填報</option>
+            <option value="發新聞稿">發新聞稿</option>
+            <option value="長官行程">長官行程</option>
+            <option value="晨會指示">晨會指示</option>
+            <option value="新北bar">📱 新北bar</option>
+            <option value="民眾關心">👥 民眾關心</option>
+            <option value="民代關心">🏛️ 民代關心</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- 視圖一：表格清單 -->
+    <div id="tableViewContainer" class="table-container">
+      <table class="table table-hover table-responsive-custom align-middle">
+        <thead class="table-custom-header">
+          <tr>
+            <th style="width: 32px;"><input type="checkbox" id="headerCheckbox" onclick="toggleSelectAll()"></th>
+            <th style="width: 75px;">編號</th>
+            <th style="width: 50px;">年度</th>
+            <th style="width: 65px;">性質</th>
+            <th style="min-width: 190px;">工作項目 / 具體目標</th>
+            <th style="width: 110px;">承辦起訖日期</th>
+            <th style="width: 140px;">承辦與督導</th>
+            <th style="width: 60px;">重要性</th>
+            <th style="width: 105px;">備註</th>
+            <th style="width: 60px;">完成月</th>
+            <th style="width: 50px;">AI</th>
+            <th style="min-width: 180px;">最新進度 / 檢視意見</th>
+            <th style="width: 80px;">預警</th>
+            <th style="width: 90px;">更新時間</th>
+            <th style="width: 115px; min-width: 115px;">操作功能</th>
+          </tr>
+        </thead>
+        <tbody id="taskTableBody">
+          <tr><td colspan="15" class="text-center py-4 text-muted">載入案件清單中...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 視圖二：日曆模式 -->
+    <div id="kanbanViewContainer" style="display: none;">
+      <div class="kanban-dashboard-wrapper">
+        <div class="calendar-pane">
+          <div class="mini-calendar-header">
+            <button class="btn btn-sm btn-outline-secondary py-0 px-2" onclick="changeCalendarMonth(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+            <span id="calendarMonthTitle">2026年 10月</span>
+            <button class="btn btn-sm btn-outline-secondary py-0 px-2" onclick="changeCalendarMonth(1)"><i class="fa-solid fa-chevron-right"></i></button>
+          </div>
+          <div class="calendar-grid mb-2">
+            <div class="cal-day-header text-danger">日</div>
+            <div class="cal-day-header">一</div>
+            <div class="cal-day-header">二</div>
+            <div class="cal-day-header">三</div>
+            <div class="cal-day-header">四</div>
+            <div class="cal-day-header">五</div>
+            <div class="cal-day-header text-primary">六</div>
+          </div>
+          <div class="calendar-grid" id="calendarDaysGrid"></div>
+
+          <div class="mt-auto pt-2 border-top text-muted small d-flex justify-content-between align-items-center">
+            <span><span class="d-inline-block rounded me-1" style="width: 12px; height: 12px; background-color: #e0edff; border: 1px solid #b8d5ff; vertical-align: middle;"></span>有列管事項</span>
+            <button class="btn btn-xs btn-link text-decoration-none p-0" onclick="resetCalendarFilter()">重設全部</button>
+          </div>
+        </div>
+
+        <div class="kanban-main-pane">
+          <div class="kanban-month-box">
+            <div class="kanban-box-header header-current-month">
+              <span><i class="fa-regular fa-calendar-check me-2"></i><span id="labelCurrentMonth">當月</span></span>
+              <span class="badge bg-light text-dark rounded-pill" id="badgeCurrentCount">0 件</span>
+            </div>
+            <div class="kanban-cards-scroll" id="cardsCurrentMonth"></div>
+          </div>
+
+          <div class="kanban-month-box">
+            <div class="kanban-box-header header-next-month">
+              <span><i class="fa-solid fa-forward me-2"></i><span id="labelNextMonth">下個月</span></span>
+              <span class="badge bg-light text-dark rounded-pill" id="badgeNextCount">0 件</span>
+            </div>
+            <div class="kanban-cards-scroll" id="cardsNextMonth"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 身分確認與快速切換 Modal -->
+  <div class="modal fade" id="switchUserModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 420px;">
+      <div class="modal-content shadow-lg border-0">
+        <div class="modal-header bg-primary text-white py-3">
+          <h6 class="modal-title fw-bold"><i class="fa-solid fa-user-check me-2"></i>請確認您在中教科的身分</h6>
+        </div>
+        <div class="modal-body p-4 text-center">
+          <div class="mb-3">
+            <i class="fa-solid fa-id-badge fa-3x text-primary"></i>
+          </div>
+          <h6 class="fw-bold text-dark mb-1">請選擇您的姓名</h6>
+          <p class="text-muted small mb-3">系統將以此身分自動套用管考與審核權限，瀏覽器將自動記住此身分。</p>
+
+          <div class="mb-3 text-start">
+            <select id="userSelectPicker" class="form-select form-select-sm fw-bold">
+              <option value="">-- 請選擇同仁姓名 --</option>
+            </select>
+          </div>
+
+          <button type="button" class="btn btn-primary btn-sm w-100 fw-bold py-2 shadow-sm" onclick="confirmUserSelection()">
+            <i class="fa-solid fa-check me-1"></i>確認進入系統
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 幹部專屬：一鍵通知設定 Modal -->
+  <div class="modal fade" id="notifyModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content shadow-lg border-0">
+        <div class="modal-header bg-warning text-dark py-2">
+          <h6 class="modal-title fw-bold">
+            <i class="fa-solid fa-bell me-2"></i>一鍵信件通知同仁填報進度
+          </h6>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body p-3">
+          <p class="small text-muted mb-3">
+            系統將自動彙整目前所有<strong>「未解列案件」</strong>，並分別發送專屬公務 Email 給各專案之主責與協同同仁，提醒及時更新辦理進度。
+          </p>
+
+          <div class="mb-3">
+            <label class="form-label small fw-bold text-danger">
+              <i class="fa-regular fa-clock me-1"></i><span class="text-danger">*</span> 請設定填寫截止時間：
+            </label>
+            <input type="datetime-local" id="notifyDeadlineInput" class="form-control form-control-sm fw-bold text-danger" required>
+            <div class="form-text" style="font-size: 0.72rem;">此時間將顯著呈現於同仁之通知郵件主旨與醒目警示欄中。</div>
+          </div>
+
+          <div class="mb-2">
+            <label class="form-label small fw-bold text-dark">
+              <i class="fa-solid fa-pen-nib me-1"></i>幹部備註提醒事項（選填）：
+            </label>
+            <textarea id="notifyRemarkInput" class="form-control form-control-sm" rows="3" placeholder="例如：因應局務會議管考，請各專案承辦務必於期限前完成具體進度更新..."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer py-2">
+          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">取消</button>
+          <button type="button" class="btn btn-warning btn-sm fw-bold text-dark" id="btnConfirmSendNotify" onclick="submitBatchNotification()">
+            <i class="fa-solid fa-paper-plane me-1"></i>確認發送催填信件
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 新增/編輯 Modal (含23項類別選單與晨會指示標籤) -->
+  <div class="modal fade" id="taskModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white py-2">
+          <h6 class="modal-title fw-bold" id="modalTitle">新增 / 編輯專案</h6>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body p-3">
+          <form id="taskForm">
+            <input type="hidden" id="formTaskId">
+            <div class="row g-2 mb-2">
+              <div class="col-4 col-md-2">
+                <label class="form-label small fw-bold">年度</label>
+                <select id="formYear" class="form-select form-select-sm" required>
+                  <option value="115" selected>115</option>
+                  <option value="116">116</option>
+                  <option value="117">117</option>
+                </select>
+              </div>
+              <div class="col-4 col-md-2">
+                <label class="form-label small fw-bold">業務性質</label>
+                <select id="formType" class="form-select form-select-sm fw-bold text-primary" onchange="handleTypeChange()" required>
+                  <option value="繁星" selected>繁星</option>
+                  <option value="例行">例行</option>
+                </select>
+              </div>
+              <div class="col-12 col-md-8">
+                <label class="form-label small fw-bold"><i class="fa-regular fa-calendar-days text-primary me-1"></i>承辦起訖日期與時間</label>
+                <div class="d-flex align-items-center gap-1">
+                  <input type="datetime-local" id="startDatePicker" class="form-control form-control-sm" required>
+                  <span class="text-muted small">至</span>
+                  <input type="datetime-local" id="endDatePicker" class="form-control form-control-sm" required>
+                </div>
+              </div>
+            </div>
+
+            <!-- 工作項目：23項業務分類與【OO】自動聯動 -->
+            <div class="mb-2">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <label class="form-label small fw-bold text-primary mb-0">
+                  <i class="fa-solid fa-heading me-1"></i>工作項目
+                </label>
+                <div class="d-flex align-items-center gap-1">
+                  <span class="text-muted" style="font-size: 0.72rem; font-weight: 600;">類別：</span>
+                  <select id="formCategorySelect" class="form-select form-select-sm py-0 px-2 fw-bold text-primary" style="width: auto; font-size: 0.75rem; height: 26px;" onchange="applyCategoryPrefix(this.value)">
+                    <option value="">-- 請選擇類別 --</option>
+                    <option value="教師甄試">教師甄試</option>
+                    <option value="在地就學">在地就學</option>
+                    <option value="校長遴選">校長遴選</option>
+                    <option value="主任甄選">主任甄選</option>
+                    <option value="教師專業">教師專業</option>
+                    <option value="考試升學">考試升學</option>
+                    <option value="學力提升">學力提升</option>
+                    <option value="人力資源">人力資源</option>
+                    <option value="行政減量">行政減量</option>
+                    <option value="活動競賽">活動競賽</option>
+                    <option value="學生學習">學生學習</option>
+                    <option value="獎勵補助">獎勵補助</option>
+                    <option value="本土語言">本土語言</option>
+                    <option value="實驗教育">實驗教育</option>
+                    <option value="國際交流">國際交流</option>
+                    <option value="計畫申請">計畫申請</option>
+                    <option value="私校相關">私校相關</option>
+                    <option value="社群媒體">社群媒體</option>
+                    <option value="政策規劃">政策規劃</option>
+                    <option value="法規修正">法規修正</option>
+                    <option value="一般考核">一般考核</option>
+                    <option value="組織創新">組織創新</option>
+                    <option value="其他類別">其他類別</option>
+                  </select>
+                </div>
+              </div>
+              <input type="text" id="formMainTitle" class="form-control form-control-sm fw-bold text-primary" placeholder="例如：116學年度各項推動工作" required>
+            </div>
+
+            <div class="mb-2">
+              <label class="form-label small fw-bold text-dark"><i class="fa-solid fa-list-check me-1"></i>具體目標 / 列管專案內容 (細部指標，支援上下滑桿調整)</label>
+              <textarea id="formSubGoals" class="form-control form-control-sm auto-expand-textarea" rows="3" placeholder="請分點分列填寫..." oninput="autoResizeTextarea(this)"></textarea>
+            </div>
+
+            <!-- 承辦與督導配對設定 -->
+            <div class="row g-2 mb-2 p-2 rounded bg-light border">
+              <div class="col-12 text-muted fw-bold small mb-1">
+                <i class="fa-solid fa-user-group text-primary me-1"></i>承辦與督導配對設定 (選定承辦自動帶出股長，選股長自動對應專員)
+              </div>
+              <div class="col-12 col-md-6 border-end">
+                <label class="form-label small fw-bold text-primary">① 主責組 (承辦人 - 督導幹部)</label>
+                <div class="d-flex gap-1 mb-1">
+                  <select id="formStaffOp" class="form-select form-select-sm" onchange="autoAssignSupervisor('op')" required>
+                    <option value="">請選主責承辦...</option>
+                  </select>
+                  <select id="formSupervisorOp" class="form-select form-select-sm" required>
+                    <option value="">請選督導幹部...</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-12 col-md-6">
+                <label class="form-label small fw-bold text-secondary">② 協同組 (協同共辦 - 協同督導)</label>
+                <div class="d-flex gap-1 mb-1">
+                  <select id="formStaffCo" class="form-select form-select-sm" onchange="autoAssignSupervisor('co')">
+                    <option value="">無協同承辦...</option>
+                  </select>
+                  <select id="formSupervisorCo" class="form-select form-select-sm">
+                    <option value="">無協同督導...</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="row g-2 mb-2 align-items-start">
+              <div class="col-6 col-md-3" id="priorityContainer">
+                <label class="form-label small fw-bold text-danger">繁星重要性</label>
+                <select id="formPriority" class="form-select form-select-sm">
+                  <option value="重要" selected>重要</option>
+                  <option value="極重要">極重要</option>
+                  <option value="一般">一般</option>
+                </select>
+              </div>
+              <div class="col-6 col-md-3">
+                <label class="form-label small fw-bold">完成月份</label>
+                <select id="formFinishMonth" class="form-select form-select-sm">
+                  <option value="-">未定</option>
+                  <option value="1月">1月</option><option value="2月">2月</option><option value="3月">3月</option>
+                  <option value="4月">4月</option><option value="5月">5月</option><option value="6月">6月</option>
+                  <option value="7月">7月</option><option value="8月" selected>8月</option><option value="9月">9月</option>
+                  <option value="10月">10月</option><option value="11月">11月</option><option value="12月">12月</option>
+                </select>
+              </div>
+              <div class="col-6 col-md-2">
+                <label class="form-label small fw-bold">使用 AI</label>
+                <select id="formUseAi" class="form-select form-select-sm">
+                  <option value="否" selected>否</option>
+                  <option value="是">是</option>
+                </select>
+              </div>
+              <div class="col-12 col-md-4">
+                <label class="form-label small fw-bold">備註 (複選)</label>
+                <div class="form-pill-container">
+                  <label class="form-pill-label badge-star-plan" onclick="toggleFormPill(this)"><input type="checkbox" name="formTags" value="繁星計畫"><i class="fa-solid fa-star me-1"></i>繁星計畫</label>
+                  <label class="form-pill-label badge-doc-fill" onclick="toggleFormPill(this)"><input type="checkbox" name="formTags" value="公文填報"><i class="fa-solid fa-file-lines me-1"></i>公文填報</label>
+                  <label class="form-pill-label badge-news-press" onclick="toggleFormPill(this)"><input type="checkbox" name="formTags" value="發新聞稿"><i class="fa-solid fa-bullhorn me-1"></i>發新聞稿</label>
+                  <label class="form-pill-label badge-vip-schedule" onclick="toggleFormPill(this)"><input type="checkbox" name="formTags" value="長官行程"><i class="fa-solid fa-calendar-check me-1"></i>長官行程</label>
+                  <label class="form-pill-label badge-major-project" onclick="toggleFormPill(this)"><input type="checkbox" name="formTags" value="晨會指示"><i class="fa-solid fa-comments me-1"></i>晨會指示</label>
+                  <label class="form-pill-label badge-ntpc-bar" onclick="toggleFormPill(this)"><input type="checkbox" name="formTags" value="新北bar"><i class="fa-solid fa-share-nodes me-1"></i>新北bar</label>
+                  <label class="form-pill-label badge-public-care" onclick="toggleFormPill(this)"><input type="checkbox" name="formTags" value="民眾關心"><i class="fa-solid fa-users me-1"></i>民眾關心</label>
+                  <label class="form-pill-label badge-reps-care" onclick="toggleFormPill(this)"><input type="checkbox" name="formTags" value="民代關心"><i class="fa-solid fa-landmark-dome me-1"></i>民代關心</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-2">
+              <label class="form-label small fw-bold">同仁最新進度回報 (支援文字自動延展與上下滾動軸)</label>
+              <textarea id="formProgress" class="form-control form-control-sm auto-expand-textarea" rows="3" placeholder="請對齊具體目標分點填寫..." oninput="autoResizeTextarea(this)"></textarea>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer py-2">
+          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">取消</button>
+          <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="submitTaskForm()">儲存送出</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 批次整筆匯入 Modal -->
+  <div class="modal fade" id="importModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-success text-white py-2">
+          <h6 class="modal-title fw-bold"><i class="fa-solid fa-file-import me-2"></i>批次整筆匯入歷史年度資料</h6>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body p-3">
+          <p class="small text-muted mb-2">請選取歷史案件 Excel 檔案（.xlsx 或 .xls），系統將自動讀取、校正格式並批次寫入：</p>
+          <div class="mb-3">
+            <input class="form-control form-control-sm" type="file" id="excelFileInput" accept=".xlsx, .xls">
+          </div>
+        </div>
+        <div class="modal-footer py-2">
+          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">取消</button>
+          <button type="button" class="btn btn-success btn-sm fw-bold" id="btnConfirmImport" onclick="processExcelImport()">
+            <i class="fa-solid fa-upload me-1"></i>開始整筆匯入
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 幹部審閱 Modal (專員/科長/股長專用) -->
+  <div class="modal fade" id="reviewModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-dark text-white py-2">
+          <h6 class="modal-title fw-bold"><i class="fa-solid fa-stamp me-2"></i>幹部審核簽署 (專員 / 科長 / 股長)</h6>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body p-3">
+          <input type="hidden" id="reviewTaskId">
+          <div class="mb-2">
+            <label class="form-label small fw-bold">審核者職稱</label>
+            <select id="reviewerTitle" class="form-select form-select-sm">
+              <option value="科長">科長</option>
+              <option value="專員">專員</option>
+              <option value="股長">股長</option>
+            </select>
+          </div>
+          <div class="mb-2">
+            <label class="form-label small fw-bold">幹部檢視意見 / 裁示指示</label>
+            <textarea id="reviewComment" class="form-control form-select-sm" rows="3" placeholder="退件時請務必填寫具體修正要求..."></textarea>
+          </div>
+          <div class="d-flex justify-content-between gap-2 mt-3">
+            <button class="btn btn-success flex-grow-1 fw-bold btn-sm" onclick="submitReview('同意')"><i class="fa-solid fa-check me-1"></i>同意</button>
+            <button class="btn btn-danger flex-grow-1 fw-bold btn-sm" onclick="submitReview('退件')"><i class="fa-solid fa-rotate-left me-1"></i>退件</button>
+            <button class="btn btn-secondary flex-grow-1 fw-bold btn-sm" onclick="submitReview('解列')"><i class="fa-solid fa-box-archive me-1"></i>解列</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 系統檢核與修復 Modal -->
+  <div class="modal fade" id="auditModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header bg-dark text-white py-2">
+          <h6 class="modal-title fw-bold" id="auditModalTitle"><i class="fa-solid fa-shield-halved text-warning me-2"></i>Google 日曆與系統排程診斷</h6>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body p-3">
+          <div id="auditLoadingState" class="text-center py-4">
+            <div class="spinner-border text-primary me-2"></div>
+            <span class="text-muted fw-bold">正在掃描系統狀態...</span>
+          </div>
+          <div id="auditResultContent" style="display: none;">
+            <div class="row g-2 mb-3">
+              <div class="col-12 col-md-6">
+                <div class="p-2 border rounded bg-white shadow-sm d-flex justify-content-between align-items-center">
+                  <div>
+                    <span class="small fw-bold text-dark"><i class="fa-regular fa-sun text-warning me-1"></i>每日晨報推播：</span>
+                    <div id="dailyBriefingBadge" class="badge bg-secondary mt-1">檢測中...</div>
+                  </div>
+                  <div id="dailyBriefingBtnContainer"></div>
+                </div>
+              </div>
+              <div class="col-12 col-md-6">
+                <div class="p-2 border rounded bg-white shadow-sm d-flex justify-content-between align-items-center">
+                  <div>
+                    <span class="small fw-bold text-dark"><i class="fa-solid fa-clock-rotate-left text-primary me-1"></i>每週日曆校對：</span>
+                    <div id="weeklyAuditBadge" class="badge bg-secondary mt-1">檢測中...</div>
+                  </div>
+                  <div id="weeklyAuditBtnContainer"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row g-2 mb-3 text-center">
+              <div class="col-3"><div class="p-2 border rounded bg-light"><div class="text-muted small">試算表案件</div><h5 class="mb-0 fw-bold" id="auditTotalTasks">0</h5></div></div>
+              <div class="col-3"><div class="p-2 border rounded bg-light"><div class="text-muted small">日曆事件總數</div><h5 class="mb-0 fw-bold" id="auditTotalEvents">0</h5></div></div>
+              <div class="col-3"><div class="p-2 border rounded bg-light"><div class="text-muted small">日曆遺漏案件</div><h5 class="mb-0 fw-bold text-danger" id="auditMissingCount">0</h5></div></div>
+              <div class="col-3"><div class="p-2 border rounded bg-light"><div class="text-muted small">標籤狀態脫鉤</div><h5 class="mb-0 fw-bold text-warning" id="auditMismatchCount">0</h5></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer py-2">
+          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">關閉</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    let allTasks = [];
+    let staffData = [];
+    let isAllSelected = false;
+    let currentView = 'table';
+    let taskModalInstance, reviewModalInstance, auditModalInstance, switchUserModalInstance, importModalInstance, notifyModalInstance;
+    let currentActiveQuickFilter = null;
+
+    let calendarCurrentDate = new Date();
+    let selectedCalendarDateStr = null;
+
+    let currentUserAuth = {
+      isValid: false,
+      name: "",
+      role: "同仁",
+      canEditAll: false,
+      canReview: false,
+      canDelete: false
+    };
+
+    window.addEventListener("DOMContentLoaded", () => {
+      taskModalInstance = new bootstrap.Modal(document.getElementById('taskModal'));
+      reviewModalInstance = new bootstrap.Modal(document.getElementById('reviewModal'));
+      auditModalInstance = new bootstrap.Modal(document.getElementById('auditModal'));
+      switchUserModalInstance = new bootstrap.Modal(document.getElementById('switchUserModal'));
+      importModalInstance = new bootstrap.Modal(document.getElementById('importModal'));
+      notifyModalInstance = new bootstrap.Modal(document.getElementById('notifyModal'));
+
+      google.script.run
+        .withSuccessHandler(list => {
+          staffData = list || [];
+          populateStaffSelects(list);
+          populateUserSelectPicker(list);
+          checkAndInitUser();
+        })
+        .withFailureHandler(err => {
+          alert("連線失敗，請確認 Apps Script 部署設定: " + err);
+        })
+        .getStaffList();
+    });
+
+    function checkAndInitUser() {
+      const savedName = localStorage.getItem("SEC_USER_NAME");
+      if (savedName) {
+        applyUserAuth(savedName);
+      } else {
+        switchUserModalInstance.show();
+      }
+    }
+
+    function populateUserSelectPicker(staffList) {
+      const picker = document.getElementById("userSelectPicker");
+      if (!picker) return;
+      picker.innerHTML = '<option value="">-- 請選擇您的姓名 --</option>';
+
+      const groups = {};
+      staffList.forEach(s => {
+        const g = s.group || "其他人員";
+        if (!groups[g]) groups[g] = [];
+        groups[g].push(s);
+      });
+
+      for (const g in groups) {
+        const optg = document.createElement("optgroup");
+        optg.label = `📁 ${g}`;
+        groups[g].forEach(s => {
+          optg.innerHTML += `<option value="${s.name}">${s.name} (${s.type || '同仁'})</option>`;
+        });
+        picker.appendChild(optg);
+      }
+    }
+
+    function confirmUserSelection() {
+      const selectedName = document.getElementById("userSelectPicker").value;
+      if (!selectedName) {
+        alert("請選擇您的中文姓名！");
+        return;
+      }
+      localStorage.setItem("SEC_USER_NAME", selectedName);
+      switchUserModalInstance.hide();
+      applyUserAuth(selectedName);
+    }
+
+    function openSwitchUserModal() {
+      const savedName = localStorage.getItem("SEC_USER_NAME") || "";
+      document.getElementById("userSelectPicker").value = savedName;
+      switchUserModalInstance.show();
+    }
+
+    function applyUserAuth(staffName) {
+      google.script.run
+        .withSuccessHandler(auth => {
+          if (!auth || !auth.isValid) {
+            localStorage.removeItem("SEC_USER_NAME");
+            switchUserModalInstance.show();
+            return;
+          }
+          currentUserAuth = auth;
+          renderUserAuthBadge(auth);
+
+          const delOpt = document.getElementById("batchDeleteMenuOption");
+          const delAct = document.getElementById("batchDeleteMenuAction");
+          if (delOpt) delOpt.style.display = auth.canDelete ? "block" : "none";
+          if (delAct) delAct.style.display = auth.canDelete ? "block" : "none";
+
+          const notifyBtn = document.getElementById("btnBatchNotify");
+          if (notifyBtn) {
+            notifyBtn.style.display = auth.canReview ? "inline-block" : "none";
+          }
+
+          loadTasks();
+        })
+        .getAuthByName(staffName);
+    }
+
+    function renderUserAuthBadge(auth) {
+      const el = document.getElementById("userAuthDisplay");
+      if (!el) return;
+      let badgeClass = "auth-badge-staff";
+      if (auth.role === "科長" || auth.role === "專員") badgeClass = "auth-badge-leader";
+      else if (auth.role === "股長") badgeClass = "auth-badge-cadre";
+
+      el.innerHTML = `
+        <span class="badge ${badgeClass} py-1 px-2 d-inline-flex align-items-center" style="font-size: 0.75rem; height: 31px; border-radius: 6px; letter-spacing: 0.3px;">
+          <i class="fa-solid fa-user-shield me-1"></i>${escapeHtml(auth.name)} [${escapeHtml(auth.role)}]
+        </span>
+      `;
+    }
+
+    function openNotifyModal() {
+      if (!currentUserAuth.canReview) {
+        alert("⚠️ 權限不足：僅【股長、專員、科長】具備發信催填權限！");
+        return;
+      }
+
+      const d = new Date();
+      d.setDate(d.getDate() + 3);
+      d.setHours(17, 0, 0, 0);
+      const pad = n => String(n).padStart(2, '0');
+      const defaultDeadline = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+      
+      document.getElementById("notifyDeadlineInput").value = defaultDeadline;
+      document.getElementById("notifyRemarkInput").value = "";
+      notifyModalInstance.show();
+    }
+
+    function submitBatchNotification() {
+      const deadlineVal = document.getElementById("notifyDeadlineInput").value;
+      if (!deadlineVal) {
+        alert("請設定填寫截止時間！");
+        return;
+      }
+
+      const formattedDeadline = deadlineVal.replace("T", " ");
+      const remarkVal = document.getElementById("notifyRemarkInput").value.trim();
+
+      const pendingTasks = allTasks.filter(t => !String(t.reviewStatus || "").includes("解列"));
+      if (pendingTasks.length === 0) {
+        alert("目前系統中所有案件皆已解列完成，無待辦案件！");
+        return;
+      }
+
+      const payload = pendingTasks.map(t => ({
+        id: t.id,
+        title: t.title.split('\n')[0],
+        staff: t.staffConfig || t.staffDisplay || "",
+        dateRange: t.dateRange,
+        progress: t.progress
+      }));
+
+      if (!confirm(`確定要向未解列案件（共 ${payload.length} 案）的承辦同仁發送 Email 催填通知信？\n\n⏰ 截止時間：${formattedDeadline}`)) {
+        return;
+      }
+
+      const btn = document.getElementById("btnConfirmSendNotify");
+      btn.disabled = true;
+      btn.innerHTML = `<span class="spinner-border spinner-border-sm me-1"></span>彙整案件並寄信中...`;
+
+      google.script.run
+        .withSuccessHandler(res => {
+          btn.disabled = false;
+          btn.innerHTML = `<i class="fa-solid fa-paper-plane me-1"></i>確認發送催填信件`;
+
+          if (res && res.success) {
+            notifyModalInstance.hide();
+            alert(`🎉 發信成功！\n共已成功發送 ${res.sentCount} 封催填信件。\n已通知同仁：${res.staffListStr}`);
+          } else {
+            alert(res ? res.message : "發生未知錯誤");
+          }
+        })
+        .withFailureHandler(err => {
+          btn.disabled = false;
+          btn.innerHTML = `<i class="fa-solid fa-paper-plane me-1"></i>確認發送催填信件`;
+          alert("❌ 系統發信錯誤: " + err);
+        })
+        .sendBatchProgressReminderEmailDirect(payload, formattedDeadline, remarkVal, currentUserAuth.name);
+    }
+
+    function loadTasks() {
+      google.script.run
+        .withSuccessHandler(renderData)
+        .getTasksData();
+    }
+
+    function renderData(data) {
+      allTasks = data || [];
+      filterTasks();
+    }
+
+    function switchView(view) {
+      currentView = view;
+      if (view === 'table') {
+        document.getElementById('tableViewContainer').style.display = 'block';
+        document.getElementById('kanbanViewContainer').style.display = 'none';
+        document.getElementById('btnTableView').classList.add('active');
+        document.getElementById('btnKanbanView').classList.remove('active');
+      } else {
+        document.getElementById('tableViewContainer').style.display = 'none';
+        document.getElementById('kanbanViewContainer').style.display = 'block';
+        document.getElementById('btnTableView').classList.remove('active');
+        document.getElementById('btnKanbanView').classList.add('active');
+      }
+      filterTasks();
+    }
+
+    function autoResizeTextarea(element) {
+      if (!element) return;
+      element.style.height = "auto";
+      const newHeight = Math.min(element.scrollHeight, 240);
+      element.style.height = (newHeight > 80 ? newHeight : 80) + "px";
+    }
+
+    function handleTypeChange() {
+      const type = document.getElementById("formType").value;
+      document.getElementById("priorityContainer").style.display = (type === "繁星") ? "block" : "none";
+    }
+
+    function applyCategoryPrefix(category) {
+      const titleInput = document.getElementById("formMainTitle");
+      if (!titleInput) return;
+      let currentVal = titleInput.value.trim();
+      currentVal = currentVal.replace(/^【.*?】\s*/, "");
+      if (category) {
+        titleInput.value = `【${category}】 ${currentVal}`;
+      } else {
+        titleInput.value = currentVal;
+      }
+    }
+
+    function populateStaffSelects(staffList) {
+      if (!staffList || staffList.length === 0) return;
+      staffData = staffList;
+      const opSelect = document.getElementById("formStaffOp");
+      const coSelect = document.getElementById("formStaffCo");
+      const supOpSelect = document.getElementById("formSupervisorOp");
+      const supCoSelect = document.getElementById("formSupervisorCo");
+
+      opSelect.innerHTML = '<option value="">請選主責承辦...</option>';
+      coSelect.innerHTML = '<option value="">無協同承辦...</option>';
+      supOpSelect.innerHTML = '<option value="">請選督導幹部...</option>';
+      supCoSelect.innerHTML = '<option value="">無協同督導...</option>';
+
+      const opCandidates = staffList.filter(s => !s.type.includes("專員") && !s.type.includes("科長"));
+      const staffGroups = {};
+      opCandidates.forEach(s => {
+        const groupName = s.group || "其他同仁";
+        if (!staffGroups[groupName]) staffGroups[groupName] = [];
+        staffGroups[groupName].push(s);
+      });
+
+      for (const groupName in staffGroups) {
+        const optgroupOp = document.createElement("optgroup");
+        optgroupOp.label = `📁 ${groupName}`;
+        const optgroupCo = document.createElement("optgroup");
+        optgroupCo.label = `📁 ${groupName}`;
+
+        staffGroups[groupName].forEach(s => {
+          const typeSuffix = s.type ? ` [${s.type}]` : "";
+          optgroupOp.innerHTML += `<option value="${s.name}" data-group="${groupName}">${s.name}${typeSuffix}</option>`;
+          optgroupCo.innerHTML += `<option value="${s.name}" data-group="${groupName}">${s.name}${typeSuffix}</option>`;
+        });
+
+        opSelect.appendChild(optgroupOp);
+        coSelect.appendChild(optgroupCo);
+      }
+
+      const supervisors = staffList.filter(s => s.type.includes("股長") || s.type.includes("專員") || s.type.includes("科長") || s.type.includes("幹部") || (s.group && s.group.includes("幹部")));
+      supervisors.forEach(s => {
+        const optStr = `<option value="${s.name}">${s.name} (${s.group} - ${s.type})</option>`;
+        supOpSelect.innerHTML += optStr;
+        supCoSelect.innerHTML += optStr;
+      });
+    }
+
+    function autoAssignSupervisor(slotType) {
+      const selectEl = (slotType === "op") ? document.getElementById("formStaffOp") : document.getElementById("formStaffCo");
+      const supSelectEl = (slotType === "op") ? document.getElementById("formSupervisorOp") : document.getElementById("formSupervisorCo");
+
+      if (!selectEl || !supSelectEl) return;
+      const rawName = selectEl.value.trim();
+      const cleanName = rawName.replace(/\[.*?\]|\(.*?\)/g, "").trim();
+
+      if (!cleanName) {
+        if (slotType === "co") supSelectEl.value = "";
+        return;
+      }
+
+      const staffObj = staffData.find(s => s.name.replace(/\[.*?\]|\(.*?\)/g, "").trim() === cleanName);
+      const groupName = staffObj ? staffObj.group : "";
+      const typeName = staffObj ? staffObj.type : "";
+
+      let targetSupervisor = "";
+
+      if (typeName.includes("股長") || cleanName.includes("股長")) {
+        const matched = staffData.find(s => s.type.includes("專員") || s.name.includes("專員"));
+        targetSupervisor = matched ? matched.name : "";
+      } else if (groupName.includes("國中")) {
+        const matched = staffData.find(s => s.group.includes("國中") && (s.type.includes("股長") || s.name.includes("股長")));
+        targetSupervisor = matched ? matched.name : "";
+      } else if (groupName.includes("高中")) {
+        const matched = staffData.find(s => s.group.includes("高中") && (s.type.includes("股長") || s.name.includes("股長")));
+        targetSupervisor = matched ? matched.name : "";
+      } else {
+        const matched = staffData.find(s => s.group === groupName && (s.type.includes("股長") || s.name.includes("股長")));
+        targetSupervisor = matched ? matched.name : "";
+      }
+
+      if (targetSupervisor) {
+        for (let i = 0; i < supSelectEl.options.length; i++) {
+          if (supSelectEl.options[i].value === targetSupervisor) {
+            supSelectEl.selectedIndex = i;
+            break;
+          }
+        }
+      }
+    }
+
+    function toggleFormPill(labelEl) {
+      setTimeout(() => {
+        const cb = labelEl.querySelector('input[type="checkbox"]');
+        if (cb.checked) labelEl.classList.add('active');
+        else labelEl.classList.remove('active');
+      }, 10);
+    }
+
+    function renderVerticalTags(tags) {
+      if (!tags) return `<span class="text-muted small">-</span>`;
+      let rawList = [];
+      if (Array.isArray(tags)) {
+        tags.forEach(t => {
+          if (t) rawList.push(...String(t).split(/[,、，]/));
+        });
+      } else {
+        rawList = String(tags).split(/[,、，]/);
+      }
+
+      const cleanTags = rawList.map(s => String(s).trim()).filter(Boolean);
+      if (cleanTags.length === 0) return `<span class="text-muted small">-</span>`;
+
+      const badgesHtml = cleanTags.map(cleanTag => {
+        let badgeClass = "badge-default-tag";
+        let iconClass = "fa-solid fa-tag";
+
+        if (cleanTag.includes("繁星")) {
+          badgeClass = "badge-star-plan";
+          iconClass = "fa-solid fa-star";
+        } else if (cleanTag.includes("公文")) {
+          badgeClass = "badge-doc-fill";
+          iconClass = "fa-solid fa-file-lines";
+        } else if (cleanTag.includes("新聞稿")) {
+          badgeClass = "badge-news-press";
+          iconClass = "fa-solid fa-bullhorn";
+        } else if (cleanTag.includes("行程")) {
+          badgeClass = "badge-vip-schedule";
+          iconClass = "fa-solid fa-calendar-check";
+        } else if (cleanTag.includes("晨會指示") || cleanTag.includes("重大專案")) {
+          badgeClass = "badge-major-project";
+          iconClass = "fa-solid fa-comments";
+        } else if (cleanTag.includes("新北bar") || cleanTag.includes("新北Bar")) {
+          badgeClass = "badge-ntpc-bar";
+          iconClass = "fa-solid fa-share-nodes";
+        } else if (cleanTag.includes("民眾關心")) {
+          badgeClass = "badge-public-care";
+          iconClass = "fa-solid fa-users";
+        } else if (cleanTag.includes("民代關心")) {
+          badgeClass = "badge-reps-care";
+          iconClass = "fa-solid fa-landmark-dome";
+        }
+
+        return `<span class="custom-tag-badge ${badgeClass}" title="快篩：${cleanTag}" onclick="quickFilterByTag('${cleanTag}')">
+                  <i class="${iconClass} me-1"></i>${cleanTag}
+                </span>`;
+      }).join("");
+
+      return `<div class="vertical-tag-list">${badgesHtml}</div>`;
+    }
+
+    function quickFilterByTag(tag) {
+      const tagSelect = document.getElementById("tagFilter");
+      tagSelect.value = (tagSelect.value === tag) ? "" : tag;
+      filterTasks();
+    }
+
+    function renderTableView(filtered) {
+      const tbody = document.getElementById("taskTableBody");
+      if (!tbody) return;
+      tbody.innerHTML = "";
+
+      if (!filtered || filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="15" class="text-center text-muted py-4">查無符合條件之管考項目。</td></tr>`;
+        return;
+      }
+
+      filtered.forEach(task => {
+        const tr = document.createElement("tr");
+        const isArchived = String(task.reviewStatus || "").includes("解列");
+        if (isArchived) tr.className = "table-archived-row";
+
+        const alertStatusStr = String(task.alertStatus || "正常");
+        let alertBadge = `<span class="badge bg-light text-dark border">${escapeHtml(alertStatusStr)}</span>`;
+        if (alertStatusStr.includes("逾期")) alertBadge = `<span class="badge bg-danger">${escapeHtml(alertStatusStr)}</span>`;
+        else if (alertStatusStr.includes("剩餘")) alertBadge = `<span class="badge bg-warning text-dark">${escapeHtml(alertStatusStr)}</span>`;
+
+        const fullTitle = String(task.title || "").trim();
+        let mainTitle = fullTitle;
+        let subGoals = "";
+        if (fullTitle.includes("\n")) {
+          const firstBreak = fullTitle.indexOf("\n");
+          mainTitle = fullTitle.substring(0, firstBreak).trim();
+          subGoals = fullTitle.substring(firstBreak + 1).trim();
+        }
+
+        const staffStr = String(task.staffConfig || task.staffDisplay || "");
+        const isMyTask = staffStr.includes(currentUserAuth.name);
+        const canEditThisTask = currentUserAuth.canEditAll || isMyTask;
+
+        let actionButtonsHtml = '';
+
+        if (canEditThisTask) {
+          actionButtonsHtml += `
+            <button class="btn btn-outline-primary" title="承辦填寫進度" onclick="editTaskById('${escapeHtml(task.id)}')">
+              <i class="fa-solid fa-pen-to-square"></i><span>承辦填寫</span>
+            </button>
+          `;
+        }
+
+        if (currentUserAuth.canReview) {
+          actionButtonsHtml += `
+            <button class="btn btn-dark" title="幹部審閱 (股長/專員/科長)" onclick="openReviewModal('${escapeHtml(task.id)}')">
+              <i class="fa-solid fa-stamp"></i><span>幹部審閱</span>
+            </button>
+          `;
+        }
+
+        if (currentUserAuth.canDelete) {
+          actionButtonsHtml += `
+            <button class="btn btn-outline-danger" title="案件刪除" onclick="deleteTaskAction('${escapeHtml(task.id)}')">
+              <i class="fa-solid fa-trash-can"></i><span>案件刪除</span>
+            </button>
+          `;
+        }
+
+        if (!actionButtonsHtml) {
+          actionButtonsHtml = `<span class="text-muted small" style="font-size:0.7rem;"><i class="fa-solid fa-lock me-1"></i>僅限檢視</span>`;
+        }
+
+        tr.innerHTML = `
+          <td class="text-center"><input type="checkbox" class="task-checkbox" data-task-id="${escapeHtml(task.id)}"></td>
+          <td class="text-center font-monospace small fw-bold text-primary" title="內部識別：${escapeHtml(task.id)}">${escapeHtml(task.displayId || task.id)}</td>
+          <td class="text-center fw-bold">${escapeHtml(task.year)}</td>
+          <td class="text-center"><span class="badge ${task.type === '繁星' ? 'badge-star-plan text-dark' : 'bg-secondary'}">${escapeHtml(task.type)}</span></td>
+          <td>
+            <div class="task-title-navy">${escapeHtml(mainTitle)}</div>
+            ${subGoals ? `<div class="task-goals-black">${escapeHtml(subGoals).replace(/\n/g, '<br>')}</div>` : ''}
+          </td>
+          <td class="text-center font-monospace small">${String(task.dateRange || "").replace("-", "<br>至<br>")}</td>
+          <td class="text-center">${formatStaffPairsHtml(task.staffDisplay || task.staffConfig)}</td>
+          <td class="text-center">${escapeHtml(task.priority || "-")}</td>
+          <td>${renderVerticalTags(task.tags)}</td>
+          <td class="text-center small">${escapeHtml(task.finishMonth || "-")}</td>
+          <td class="text-center small">${task.useAi === '是' ? '<span class="badge bg-info text-dark">是</span>' : '否'}</td>
+          <td class="progress-box">
+            <div class="progress-upper">${escapeHtml(task.progress || "尚無進度").replace(/\n/g, '<br>')}</div>
+            <div class="progress-lower">【${escapeHtml(task.reviewStatus || "待審閱")}】${escapeHtml(task.reviewComment || "尚未簽註")}</div>
+          </td>
+          <td class="text-center">${alertBadge}</td>
+          <td class="text-center text-muted font-monospace small">${escapeHtml(task.lastUpdated || "-")}</td>
+          <td class="text-center" style="vertical-align: middle;">
+            <div class="vertical-action-group">
+              ${actionButtonsHtml}
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderKanbanView(filtered) {
+      renderMiniCalendar();
+
+      const curMonth = calendarCurrentDate.getMonth() + 1;
+      const nextMonth = curMonth === 12 ? 1 : curMonth + 1;
+
+      document.getElementById("labelCurrentMonth").innerText = `當月 (${curMonth}月)`;
+      document.getElementById("labelNextMonth").innerText = `下個月 (${nextMonth}月)`;
+
+      const curTasks = filtered.filter(t => String(t.finishMonth).trim() === `${curMonth}月`);
+      const nextTasks = filtered.filter(t => String(t.finishMonth).trim() === `${nextMonth}月`);
+
+      document.getElementById("badgeCurrentCount").innerText = `${curTasks.length} 件`;
+      document.getElementById("badgeNextCount").innerText = `${nextTasks.length} 件`;
+
+      document.getElementById("cardsCurrentMonth").innerHTML = buildCardsHtml(curTasks);
+      document.getElementById("cardsNextMonth").innerHTML = buildCardsHtml(nextTasks);
+    }
+
+    function buildCardsHtml(tasks) {
+      if (!tasks || tasks.length === 0) {
+        return `<div class="text-center text-muted py-5" style="font-size:0.8rem;">本月份尚無列管事項</div>`;
+      }
+      return tasks.map(task => {
+        let extremeTag = "";
+        if (String(task.type).trim() === "繁星" && String(task.priority).trim() === "極重要") {
+          extremeTag = `<div class="mt-1"><span class="extreme-countdown-pulse"><i class="fa-solid fa-fire me-1"></i>極重要急件</span></div>`;
+        }
+
+        const dateStr = String(task.dateRange || "");
+        const startStr = dateStr.substring(0, 8);
+        const endStr = dateStr.includes("-") ? dateStr.split("-")[1].trim().substring(0, 8) : startStr;
+
+        const fullTitle = String(task.title || "").trim();
+        let mainTitle = fullTitle;
+        let subGoals = "";
+        if (fullTitle.includes("\n")) {
+          const firstBreak = fullTitle.indexOf("\n");
+          mainTitle = fullTitle.substring(0, firstBreak).trim();
+          subGoals = fullTitle.substring(firstBreak + 1).trim();
+        }
+
+        const staffStr = String(task.staffConfig || task.staffDisplay || "");
+        const isMyTask = staffStr.includes(currentUserAuth.name);
+        const canEditThisTask = currentUserAuth.canEditAll || isMyTask;
+
+        let cardActionBtns = '';
+        if (canEditThisTask) {
+          cardActionBtns += `
+            <button class="btn btn-xs btn-outline-primary py-0 px-2" title="承辦填寫" onclick="editTaskById('${escapeHtml(task.id)}')"><i class="fa-solid fa-pen-to-square"></i></button>
+          `;
+        }
+        if (currentUserAuth.canReview) {
+          cardActionBtns += `
+            <button class="btn btn-xs btn-dark py-0 px-2" title="幹部審閱" onclick="openReviewModal('${escapeHtml(task.id)}')"><i class="fa-solid fa-stamp"></i></button>
+          `;
+        }
+        if (currentUserAuth.canDelete) {
+          cardActionBtns += `
+            <button class="btn btn-xs btn-outline-danger py-0 px-2" title="案件刪除" onclick="deleteTaskAction('${escapeHtml(task.id)}')"><i class="fa-solid fa-trash-can"></i></button>
+          `;
+        }
+
+        return `
+          <div class="kanban-card" data-task-id="${escapeHtml(task.id)}" data-start="${startStr}" data-end="${endStr}">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <span class="badge ${task.type === '繁星' ? 'badge-star-plan text-dark' : 'bg-secondary'}" style="font-size:0.68rem;">${escapeHtml(task.type)}</span>
+              <span class="badge bg-light text-dark border" style="font-size:0.68rem;">${escapeHtml(task.reviewStatus)}</span>
+            </div>
+            <div class="task-title-navy mb-1">${escapeHtml(mainTitle)}</div>
+            ${subGoals ? `<div class="task-goals-black mb-1 small">${escapeHtml(subGoals).replace(/\n/g, '<br>')}</div>` : ''}
+            <div class="text-muted mb-1" style="font-size:0.72rem;"><i class="fa-regular fa-user me-1"></i>${formatStaffPairsHtml(task.staffDisplay || task.staffConfig)}</div>
+            <div class="font-monospace text-muted mb-1" style="font-size:0.7rem;"><i class="fa-regular fa-clock me-1"></i>${escapeHtml(task.dateRange) || '-'}</div>
+            ${extremeTag}
+            <div class="mt-2">${renderVerticalTags(task.tags)}</div>
+            <div class="d-flex justify-content-end gap-1 mt-2">
+              ${cardActionBtns || '<span class="text-muted" style="font-size:0.68rem;">唯讀</span>'}
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderMiniCalendar() {
+      const year = calendarCurrentDate.getFullYear();
+      const month = calendarCurrentDate.getMonth();
+      document.getElementById("calendarMonthTitle").innerText = `${year}年 ${month + 1}月`;
+
+      const firstDayIndex = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const grid = document.getElementById("calendarDaysGrid");
+      grid.innerHTML = "";
+
+      for (let i = 0; i < firstDayIndex; i++) grid.innerHTML += `<div class="cal-day-cell opacity-25"></div>`;
+
+      const today = new Date();
+      const todayStr = `${today.getFullYear()}${String(today.getMonth()+1).padStart(2,'0')}${String(today.getDate()).padStart(2,'0')}`;
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const curDateStr = `${year}${String(month + 1).padStart(2, '0')}${String(day).padStart(2, '0')}`;
+        const hasTask = allTasks.some(t => {
+          if (String(t.reviewStatus).includes("解列")) return false;
+          const s = String(t.dateRange || "");
+          if (s.length < 8) return false;
+          const start = s.substring(0, 8);
+          const end = s.includes("-") ? s.split("-")[1].trim().substring(0, 8) : start;
+          return (curDateStr >= start && curDateStr <= end);
+        });
+
+        let cellClass = "cal-day-cell";
+        if (curDateStr === todayStr) cellClass += " today";
+        if (hasTask) cellClass += " has-task";
+        if (curDateStr === selectedCalendarDateStr) cellClass += " selected";
+
+        grid.innerHTML += `<div class="${cellClass}" onclick="selectCalendarDate('${curDateStr}')">${day}</div>`;
+      }
+    }
+
+    function changeCalendarMonth(delta) {
+      calendarCurrentDate.setMonth(calendarCurrentDate.getMonth() + delta);
+      selectedCalendarDateStr = null;
+      filterTasks();
+    }
+
+    function selectCalendarDate(dateStr) {
+      selectedCalendarDateStr = (selectedCalendarDateStr === dateStr) ? null : dateStr;
+      renderMiniCalendar();
+      if (selectedCalendarDateStr) scrollToTargetDateCard(selectedCalendarDateStr);
+    }
+
+    function scrollToTargetDateCard(dateStr) {
+      const containers = [document.getElementById("cardsCurrentMonth"), document.getElementById("cardsNextMonth")];
+      for (let container of containers) {
+        if (!container) continue;
+        const cards = container.querySelectorAll(".kanban-card");
+        for (let card of cards) {
+          const start = card.dataset.start;
+          const end = card.dataset.end;
+          if (start && end && dateStr >= start && dateStr <= end) {
+            card.scrollIntoView({ behavior: "smooth", block: "start" });
+            card.classList.add("card-targeted");
+            setTimeout(() => card.classList.remove("card-targeted"), 2500);
+            return;
+          }
+        }
+      }
+    }
+
+    function resetCalendarFilter() {
+      selectedCalendarDateStr = null;
+      renderMiniCalendar();
+    }
+
+    function openTaskModal() {
+      document.getElementById("taskForm").reset();
+      document.getElementById("formTaskId").value = "";
+      document.getElementById("formYear").value = "115";
+      document.getElementById("formType").value = "繁星";
+      handleTypeChange();
+
+      document.getElementById("formCategorySelect").value = "";
+      document.getElementById("formMainTitle").value = "";
+      document.getElementById("formSubGoals").value = "";
+      document.getElementById("formProgress").value = "";
+      autoResizeTextarea(document.getElementById("formSubGoals"));
+      autoResizeTextarea(document.getElementById("formProgress"));
+
+      document.querySelectorAll('.form-pill-label').forEach(label => {
+        const cb = label.querySelector('input[type="checkbox"]');
+        if (cb) cb.checked = false;
+        label.classList.remove('active');
+      });
+
+      if (currentUserAuth.name && currentUserAuth.name !== "未選定同仁") {
+        setSelectByFuzzyName("formStaffOp", currentUserAuth.name);
+        autoAssignSupervisor("op");
+      }
+
+      document.getElementById("modalTitle").innerText = "新增列管專案";
+      taskModalInstance.show();
+    }
+
+    function editTaskById(taskId) {
+      const task = allTasks.find(t => String(t.id).trim() === String(taskId).trim());
+      if (!task) return;
+
+      const staffStr = String(task.staffConfig || task.staffDisplay || "");
+      const isMyTask = staffStr.includes(currentUserAuth.name);
+
+      if (!currentUserAuth.canEditAll && !isMyTask) {
+        alert("⚠️ 權限不足：您非本專案主責承辦或協同人員，無法編輯此案件！");
+        return;
+      }
+
+      document.getElementById("formTaskId").value = task.id;
+      document.getElementById("formYear").value = task.year || "115";
+      document.getElementById("formType").value = task.type || "繁星";
+      handleTypeChange();
+
+      const fullTitle = String(task.title || "").trim();
+      let mainTitleText = fullTitle;
+      let subGoalsText = "";
+
+      if (fullTitle.includes("\n")) {
+        const idx = fullTitle.indexOf("\n");
+        mainTitleText = fullTitle.substring(0, idx).trim();
+        subGoalsText = fullTitle.substring(idx + 1).trim();
+      }
+
+      document.getElementById("formMainTitle").value = mainTitleText;
+      document.getElementById("formSubGoals").value = subGoalsText;
+      autoResizeTextarea(document.getElementById("formSubGoals"));
+
+      const categorySelect = document.getElementById("formCategorySelect");
+      categorySelect.value = "";
+      const matchCat = mainTitleText.match(/^【(.*?)】/);
+      if (matchCat && matchCat[1]) {
+        const foundCat = matchCat[1].trim();
+        for (let i = 0; i < categorySelect.options.length; i++) {
+          if (categorySelect.options[i].value === foundCat) {
+            categorySelect.selectedIndex = i;
+            break;
+          }
+        }
+      }
+
+      const dateStr = String(task.dateRange || "");
+      if (dateStr.includes("-")) {
+        const p = dateStr.split("-");
+        setDateTimePicker("startDatePicker", p[0].trim());
+        setDateTimePicker("endDatePicker", p[1].trim());
+      } else {
+        setDateTimePicker("startDatePicker", dateStr);
+        setDateTimePicker("endDatePicker", dateStr);
+      }
+
+      document.getElementById("formPriority").value = task.priority || "一般";
+      document.getElementById("formFinishMonth").value = task.finishMonth || "-";
+      document.getElementById("formUseAi").value = task.useAi || "否";
+      document.getElementById("formProgress").value = task.progress || "";
+      autoResizeTextarea(document.getElementById("formProgress"));
+
+      const rawStaff = String(task.staffConfig || "").trim();
+      let op = "", supOp = "", co = "", supCo = "";
+
+      if (rawStaff.includes("\n")) {
+        const lines = rawStaff.split("\n").map(s => s.trim());
+        const p1 = lines[0] ? lines[0].split("/").map(s => s.trim()) : [];
+        const p2 = lines[1] ? lines[1].split("/").map(s => s.trim()) : [];
+        op = p1[0] || ""; supOp = p1[1] || "";
+        co = p2[0] || ""; supCo = p2[1] || "";
+      } else if (rawStaff.includes("/")) {
+        const parts = rawStaff.split("/").map(s => s.trim());
+        op = parts[0] || "";
+        supOp = parts[1] || "";
+      } else {
+        op = rawStaff;
+      }
+
+      setSelectByFuzzyName("formStaffOp", op);
+      if (supOp) setSelectByFuzzyName("formSupervisorOp", supOp);
+      else autoAssignSupervisor("op");
+
+      setSelectByFuzzyName("formStaffCo", co);
+      if (supCo) setSelectByFuzzyName("formSupervisorCo", supCo);
+      else if (co) autoAssignSupervisor("co");
+
+      const tags = task.tags || [];
+      document.querySelectorAll('.form-pill-label').forEach(label => {
+        const cb = label.querySelector('input[type="checkbox"]');
+        if (cb && tags.includes(cb.value)) { cb.checked = true; label.classList.add('active'); }
+        else if (cb) { cb.checked = false; label.classList.remove('active'); }
+      });
+
+      document.getElementById("modalTitle").innerText = "編輯專案：" + (task.displayId || task.id);
+      taskModalInstance.show();
+    }
+
+    function setSelectByFuzzyName(selectId, name) {
+      if (!name) return;
+      const el = document.getElementById(selectId);
+      const clean = name.replace(/\[.*?\]|\(.*?\)/g, "").trim();
+      for (let i = 0; i < el.options.length; i++) {
+        if (el.options[i].value === clean || el.options[i].text.includes(clean)) {
+          el.selectedIndex = i;
+          break;
+        }
+      }
+    }
+
+    function submitTaskForm() {
+      const mainTitle = document.getElementById("formMainTitle").value.trim();
+      const subGoals = document.getElementById("formSubGoals").value.trim();
+      if (!mainTitle) { alert("請填寫工作項目標題！"); return; }
+
+      const opStaff = document.getElementById("formStaffOp").value.trim();
+      const opSupervisor = document.getElementById("formSupervisorOp").value.trim();
+      const coStaff = document.getElementById("formStaffCo").value.trim();
+      const coSupervisor = document.getElementById("formSupervisorCo").value.trim();
+
+      if (!opStaff || !opSupervisor) { alert("請務必選取主責承辦人與對應之督導幹部！"); return; }
+
+      const pair1 = `${opStaff} / ${opSupervisor}`;
+      const pair2 = (coStaff && coSupervisor) ? `${coStaff} / ${coSupervisor}` : (coStaff ? `${coStaff} / -` : "");
+      const staffConfig = pair2 ? `${pair1}\n${pair2}` : pair1;
+
+      const payload = {
+        id: document.getElementById("formTaskId").value,
+        year: document.getElementById("formYear").value,
+        type: document.getElementById("formType").value,
+        title: subGoals ? `${mainTitle}\n${subGoals}` : mainTitle,
+        dateRange: `${getFormattedDateTime("startDatePicker")}-${getFormattedDateTime("endDatePicker")}`,
+        staffConfig: staffConfig,
+        priority: document.getElementById("formPriority").value,
+        tags: Array.from(document.querySelectorAll("input[name='formTags']:checked")).map(cb => cb.value),
+        finishMonth: document.getElementById("formFinishMonth").value,
+        useAi: document.getElementById("formUseAi").value,
+        progress: document.getElementById("formProgress").value
+      };
+
+      google.script.run
+        .withSuccessHandler(res => {
+          if (res && res.success) {
+            taskModalInstance.hide();
+            loadTasks();
+          } else {
+            alert(res.message);
+          }
+        })
+        .withFailureHandler(err => alert("儲存失敗: " + err))
+        .saveTask(payload, currentUserAuth.name);
+    }
+
+    function formatStaffPairsHtml(staffStr) {
+      if (!staffStr) return "-";
+      return staffStr.split("\n").map(line => `<span class="staff-pair-line">${escapeHtml(line.trim())}</span>`).join("");
+    }
+
+    function escapeHtml(t) { return t ? String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;") : ""; }
+
+    function getFormattedDateTime(id) {
+      const v = document.getElementById(id).value;
+      if (!v) return "";
+      const d = new Date(v);
+      return `${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}${String(d.getHours()).padStart(2,'0')}${String(d.getMinutes()).padStart(2,'0')}`;
+    }
+
+    function setDateTimePicker(id, str) {
+      if (!str || str.length < 12) return;
+      document.getElementById(id).value = `${str.substring(0,4)}-${str.substring(4,6)}-${str.substring(6,8)}T${str.substring(8,10)}:${str.substring(10,12)}`;
+    }
+
+    function filterTasks() {
+      const selectedYear = document.getElementById("yearFilter").value;
+      const selectedType = document.getElementById("typeFilter").value;
+      const selectedTag = document.getElementById("tagFilter").value;
+      const keyword = (document.getElementById("searchInput").value || "").toLowerCase().trim();
+
+      let filtered = allTasks.filter(t => {
+        const text = (String(t.id || "") + String(t.displayId || "") + String(t.title || "") + String(t.staffDisplay || "") + String(t.progress || "")).toLowerCase();
+        const matchYear = !selectedYear || String(t.year) === selectedYear;
+        const matchType = !selectedType || String(t.type) === selectedType;
+        const matchTag = !selectedTag || (t.tags && t.tags.includes(selectedTag));
+        const matchKeyword = !keyword || text.includes(keyword);
+
+        let matchQuick = true;
+        if (currentActiveQuickFilter === "AI") matchQuick = (t.useAi === "是");
+        else if (currentActiveQuickFilter === "極重要") matchQuick = (t.type === "繁星" && t.priority === "極重要" && !String(t.reviewStatus).includes("解列"));
+        else if (currentActiveQuickFilter === "解列") matchQuick = String(t.reviewStatus).includes("解列");
+
+        return matchYear && matchType && matchTag && matchKeyword && matchQuick;
+      });
+
+      // 完成月依 1～12 月排序，未定置底；同月依起始日期、編號排序。
+      filtered.sort((a, b) => {
+        const getMonth = task => {
+          const m = String(task.finishMonth || '').trim().match(/^(\d{1,2})\s*月?$/);
+          const num = m ? Number(m[1]) : 13;
+          return num >= 1 && num <= 12 ? num : 13;
+        };
+        const diff = getMonth(a) - getMonth(b);
+        if (diff) return diff;
+        const dateA = String(a.dateRange || '').slice(0, 12) || '999999999999';
+        const dateB = String(b.dateRange || '').slice(0, 12) || '999999999999';
+        if (dateA !== dateB) return dateA.localeCompare(dateB);
+        return String(a.id || '').localeCompare(String(b.id || ''), 'zh-Hant', { numeric: true });
+      });
+
+      renderDashboardByYear(selectedYear);
+
+      if (currentView === 'table') {
+        renderTableView(filtered);
+      } else {
+        renderKanbanView(filtered);
+      }
+    }
+
+    function quickFilterStatus(status) {
+      currentActiveQuickFilter = (currentActiveQuickFilter === status) ? null : status;
+      filterTasks();
+    }
+
+    function renderDashboardByYear(year) {
+      const target = year ? allTasks.filter(t => String(t.year) === year) : allTasks;
+      document.getElementById("statTotalTasks").innerText = target.length;
+      const aiCount = target.filter(t => t.useAi === "是").length;
+      document.getElementById("statAiRate").innerText = target.length > 0 ? `${Math.round(aiCount / target.length * 100)}%` : "0%";
+      document.getElementById("statExtremeTasks").innerText = target.filter(t => t.type === "繁星" && t.priority === "極重要" && !String(t.reviewStatus).includes("解列")).length;
+      document.getElementById("statArchivedTasks").innerText = target.filter(t => String(t.reviewStatus).includes("解列") || String(t.reviewStatus).includes("同意")).length;
+    }
+
+    function openReviewModal(id) {
+      if (!currentUserAuth.canReview) {
+        alert("⚠️ 權限不足：僅幹部（股長、專員、科長）可執行案件審閱！");
+        return;
+      }
+      document.getElementById("reviewTaskId").value = id;
+      document.getElementById("reviewComment").value = "";
+      reviewModalInstance.show();
+    }
+
+    function submitReview(status) {
+      const id = document.getElementById("reviewTaskId").value;
+      const comment = document.getElementById("reviewComment").value;
+      const title = document.getElementById("reviewerTitle").value;
+      google.script.run
+        .withSuccessHandler(res => {
+          if (res && res.success) {
+            reviewModalInstance.hide(); 
+            loadTasks();
+          } else {
+            alert(res.message);
+          }
+        })
+        .updateTaskReview(id, status, comment, title, currentUserAuth.name);
+    }
+
+    function deleteTaskAction(id) {
+      if (!currentUserAuth.canDelete) {
+        alert("⚠️ 權限不足：僅【科長】與【專員】可刪除案件！");
+        return;
+      }
+      if (confirm(`確定將案件【${id}】移至回收桶？`)) {
+        google.script.run
+          .withSuccessHandler(res => {
+            if (res && res.success) loadTasks();
+            else alert(res.message);
+          })
+          .deleteTask(id, currentUserAuth.name);
+      }
+    }
+
+    function deleteSelectedTasks() {
+      if (!currentUserAuth.canDelete) {
+        alert("⚠️ 權限不足：僅【科長】與【專員】具備批次刪除權限！");
+        return;
+      }
+      const selected = document.querySelectorAll(".task-checkbox:checked");
+      if (selected.length === 0) { alert("請先勾選欲刪除的專案！"); return; }
+      const idList = Array.from(selected).map(cb => cb.dataset.taskId);
+      if (confirm(`確定要將所選 ${idList.length} 筆專案移至回收桶？`)) {
+        google.script.run
+          .withSuccessHandler(res => {
+            if (res && res.success) { alert(`已成功將 ${res.count} 筆專案移至回收桶！`); loadTasks(); }
+            else alert(res.message);
+          })
+          .batchDeleteTasks(idList, currentUserAuth.name);
+      }
+    }
+
+    function toggleSelectAll() {
+      isAllSelected = !isAllSelected;
+      document.getElementById("headerCheckbox").checked = isAllSelected;
+      document.querySelectorAll(".task-checkbox").forEach(cb => cb.checked = isAllSelected);
+    }
+
+    function selectByType(targetType) {
+      document.querySelectorAll(".task-checkbox").forEach(cb => {
+        const tr = cb.closest("tr");
+        if (tr) {
+          const typeBadge = tr.querySelector("td:nth-child(4) .badge");
+          cb.checked = (typeBadge && typeBadge.innerText.includes(targetType));
+        }
+      });
+      document.getElementById("headerCheckbox").checked = false;
+    }
+
+    function openCalendarAuditModal(autoFix) {
+      document.getElementById("auditLoadingState").style.display = "block";
+      document.getElementById("auditResultContent").style.display = "none";
+      auditModalInstance.show();
+      google.script.run
+        .withSuccessHandler(res => {
+          document.getElementById("auditLoadingState").style.display = "none";
+          document.getElementById("auditResultContent").style.display = "block";
+          const rep = res.report;
+          document.getElementById("auditTotalTasks").innerText = rep.totalSheetTasks;
+          document.getElementById("auditTotalEvents").innerText = rep.totalCalendarEvents;
+          document.getElementById("auditMissingCount").innerText = rep.missingInCalendar.length;
+          document.getElementById("auditMismatchCount").innerText = rep.mismatchedEvents.length;
+          
+          document.getElementById("dailyBriefingBadge").className = rep.triggersStatus.dailyBriefing.isInstalled ? "badge bg-success" : "badge bg-secondary";
+          document.getElementById("dailyBriefingBadge").innerText = rep.triggersStatus.dailyBriefing.isInstalled ? "已啟用 (08:00)" : "未啟用";
+
+          document.getElementById("weeklyAuditBadge").className = rep.triggersStatus.weeklyAudit.isInstalled ? "badge bg-success" : "badge bg-secondary";
+          document.getElementById("weeklyAuditBadge").innerText = rep.triggersStatus.weeklyAudit.isInstalled ? "已啟用 (週一 06:00)" : "未啟用";
+        })
+        .auditAndRepairCalendarSync(autoFix);
+    }
+
+    function downloadExcelTemplate() {
+      const currentYear = document.getElementById("yearFilter").value || "115";
+      const headers = [["編號 (可留空)", "年度", "性質 (例行/繁星)", "工作項目 / 具體目標", "承辦起訖日期 (YYYYMMDDHHMM-YYYYMMDDHHMM)", "承辦與督導", "重要性", "備註標籤", "完成月份", "使用AI (是/否)", "最新進度", "審閱情形", "幹部檢視意見"]];
+      const sample = [["", currentYear, "例行", "【考試升學】 國中學術性向資優鑑定簡章發文作業", "202609010800-202609201700", "陳承辦 / 梁雅群", "-", "公文填報, 晨會指示, 新北bar", "9月", "否", "全數函發完竣", "解列", "核可存查"]];
+      const ws = XLSX.utils.aoa_to_sheet(headers.concat(sample));
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, `${currentYear}年度範本`);
+      XLSX.writeFile(wb, `中教科業務標準匯入範本_${currentYear}年度.xlsx`);
+    }
+
+    function openImportModal() {
+      document.getElementById("excelFileInput").value = "";
+      // Google 日曆同步已停用
+      importModalInstance.show();
+    }
+
+    function processExcelImport() {
+      const fileInput = document.getElementById("excelFileInput");
+      if (!fileInput.files || fileInput.files.length === 0) {
+        alert("請選擇欲匯入的 Excel 檔案！");
+        return;
+      }
+      const syncCal = false; // 只匯入系統資料
+      const file = fileInput.files[0];
+      const reader = new FileReader();
+      const btn = document.getElementById("btnConfirmImport");
+      btn.disabled = true;
+      btn.innerHTML = `<span class="spinner-border spinner-border-sm me-1"></span>解析匯入中...`;
+
+      reader.onload = function(e) {
+        try {
+          const data = new Uint8Array(e.target.result);
+          const workbook = XLSX.read(data, { type: "array" });
+          const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+          const rawJson = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+          if (rawJson.length <= 1) {
+            alert("Excel 檔案內無任何資料！");
+            btn.disabled = false;
+            btn.innerHTML = `<i class="fa-solid fa-upload me-1"></i>開始整筆匯入`;
+            return;
+          }
+
+          const records = [];
+          for (let i = 1; i < rawJson.length; i++) {
+            const r = rawJson[i];
+            if (!r || !r[3]) continue;
+            records.push({
+              id: r[0] || "",
+              year: r[1] || "115",
+              type: r[2] || "例行",
+              title: r[3] || "",
+              dateRange: r[4] || "",
+              staffConfig: r[5] || "",
+              priority: r[6] || "-",
+              tags: r[7] || "",
+              finishMonth: r[8] || "-",
+              useAi: r[9] || "否",
+              progress: r[10] || "歷史業務辦竣",
+              reviewStatus: r[11] || "解列",
+              reviewComment: r[12] || ""
+            });
+          }
+
+          google.script.run
+            .withSuccessHandler(res => {
+              btn.disabled = false;
+              btn.innerHTML = `<i class="fa-solid fa-upload me-1"></i>開始整筆匯入`;
+              importModalInstance.hide();
+              alert(`🎉 成功匯入 ${res.count} 筆歷史列管案件！` + (syncCal ? `\n📅 同步建立了 ${res.calendarCount} 筆日曆事件。` : ""));
+              loadTasks();
+            })
+            .withFailureHandler(err => {
+              btn.disabled = false;
+              btn.innerHTML = `<i class="fa-solid fa-upload me-1"></i>開始整筆匯入`;
+              alert("匯入失敗: " + err);
+            })
+            .batchImportHistoricalTasks(records, syncCal);
+
+        } catch (err) {
+          btn.disabled = false;
+          btn.innerHTML = `<i class="fa-solid fa-upload me-1"></i>開始整筆匯入`;
+          alert("Excel 解析失敗: " + err);
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    function exportSelectedTasksToExcel() {
+      const selected = document.querySelectorAll(".task-checkbox:checked");
+      const selectedIds = Array.from(selected).map(cb => cb.dataset.taskId);
+      const exportList = selectedIds.length > 0 ? allTasks.filter(t => selectedIds.includes(t.id)) : allTasks;
+
+      if (exportList.length === 0) {
+        alert("尚無可匯出之資料！");
+        return;
+      }
+
+      const rows = [["編號（依年度、性質）", "年度", "性質", "工作項目 / 具體目標", "承辦起訖日期", "承辦與督導", "重要性", "備註", "完成月", "使用AI", "最新進度", "審閱情形", "檢視意見", "預警狀態", "更新時間"]];
+      exportList.forEach(t => {
+        rows.push([t.displayId || t.id, t.year, t.type, t.title, t.dateRange, t.staffDisplay || t.staffConfig, t.priority, Array.isArray(t.tags) ? t.tags.join(", ") : t.tags, t.finishMonth, t.useAi, t.progress, t.reviewStatus, t.reviewComment, t.alertStatus, t.lastUpdated]);
+      });
+
+      const ws = XLSX.utils.aoa_to_sheet(rows);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "列管清單");
+      XLSX.writeFile(wb, `中教科業務列管清單_${new Date().toISOString().slice(0, 10)}.xlsx`);
+    }
+  </script>
+</body>
+</html>
