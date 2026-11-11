@@ -696,7 +696,7 @@
     </div>
   </div>
 
-  <!-- 身分確認與切換 Modal (重構版：國中股 / 高中股 / 幹部 三分類直覺切換) -->
+  <!-- 身分確認與切換 Modal (採用按鈕選股別，依唯一索引綁定姓名與職稱) -->
   <div class="modal fade" id="switchUserModal" data-bs-backdrop="static" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered" style="max-width: 460px;">
       <div class="modal-content shadow-lg border-0">
@@ -1032,9 +1032,9 @@
     };
 
     let selectedCategory = "國中股";
-    let pendingSelectedStaffName = "";
+    let pendingSelectedIndex = -1; // 採用索引唯一鎖定，避免重名（如多個「管理者」）時反查錯位
 
-    // 健壯型 Fetch API 封裝 (自動跟隨 302 轉址)
+    // 健壯型 Fetch API 封裝 (自動處理 302 重新導向)
     async function callGasApi(action, params = {}, method = 'GET') {
       try {
         let url = GAS_API_URL;
@@ -1078,8 +1078,9 @@
       notifyModalInstance = new bootstrap.Modal(document.getElementById('notifyModal'));
 
       const savedName = localStorage.getItem("SEC_USER_NAME");
+      const savedRole = localStorage.getItem("SEC_USER_ROLE");
       if (savedName) {
-        applyLocalUserAuth(savedName);
+        applyLocalUserAuth(savedName, savedRole);
       } else {
         applyLocalUserAuth("訪客");
         setTimeout(() => switchUserModalInstance.show(), 400);
@@ -1112,10 +1113,14 @@
         if (res && res.success && Array.isArray(res.data)) {
           staffData = res.data;
           populateStaffSelects(staffData);
+          
+          // 初始化身分切換視窗
           renderStaffOptionsByCategory(selectedCategory);
 
-          if (currentUserAuth.name && currentUserAuth.name !== "訪客") {
-            applyLocalUserAuth(currentUserAuth.name);
+          const savedName = localStorage.getItem("SEC_USER_NAME");
+          const savedRole = localStorage.getItem("SEC_USER_ROLE");
+          if (savedName && savedName !== "訪客") {
+            applyLocalUserAuth(savedName, savedRole);
           }
         }
       } catch (err) {
@@ -1127,6 +1132,7 @@
     function switchIdentityTab(category) {
       selectedCategory = category;
 
+      // 更新按鈕樣式
       document.querySelectorAll('.group-tab-btn').forEach(btn => btn.classList.remove('active'));
       if (category === "國中股") document.getElementById("tabBtnJHS").classList.add('active');
       else if (category === "高中股") document.getElementById("tabBtnSHS").classList.add('active');
@@ -1135,115 +1141,126 @@
       renderStaffOptionsByCategory(category);
     }
 
-    // 依所選類別渲染選單
+    // 依所選類別渲染選單 (跨欄位智慧比對，並綁定唯一的 originalIndex)
     function renderStaffOptionsByCategory(category) {
       const picker = document.getElementById("userSelectPicker");
       if (!picker) return;
 
-      let filteredStaff = [];
-
-      if (category === "幹部") {
-        filteredStaff = staffData.filter(s => {
-          const type = String(s.type || "");
-          const group = String(s.group || "");
-          const name = String(s.name || "");
-          return type.includes("科長") || type.includes("專員") || type.includes("股長") || type.includes("幹部") || group.includes("幹部") || name.includes("管理者");
-        });
-      } else if (category === "國中股") {
-        filteredStaff = staffData.filter(s => {
-          const group = String(s.group || "");
-          const type = String(s.type || "");
-          return (group.includes("國中") || group.includes("國中股") || group.includes("國中教育組")) && !type.includes("科長") && !type.includes("專員");
-        });
-      } else if (category === "高中股") {
-        filteredStaff = staffData.filter(s => {
-          const group = String(s.group || "");
-          const type = String(s.type || "");
-          return (group.includes("高中") || group.includes("高中股") || group.includes("高中教育組")) && !type.includes("科長") && !type.includes("專員");
-        });
-      }
-
-      picker.innerHTML = "";
-      if (filteredStaff.length === 0) {
-        picker.innerHTML = `<option value="" disabled>此分類目前無同仁名單</option>`;
-        pendingSelectedStaffName = "";
+      if (!staffData || staffData.length === 0) {
+        picker.innerHTML = `<option value="" disabled>名冊載入中或試算表無資料，請點擊上方【重新整理】</option>`;
+        pendingSelectedIndex = -1;
         updateIdentityPreview();
         return;
       }
 
+      // 保留原始在 staffData 中的 index
+      const staffWithIndex = staffData.map((s, idx) => ({ ...s, originalIndex: idx }));
+
+      let filteredStaff = staffWithIndex.filter(s => {
+        const name = String(s.name || "");
+        const group = String(s.group || "");
+        const type = String(s.type || "");
+        const combined = `${name} ${group} ${type}`;
+
+        const isCadre = combined.includes("科長") || combined.includes("專員") || combined.includes("股長") || 
+                        combined.includes("幹部") || combined.includes("督導") || (name.includes("管理者") && (type.includes("科長") || type.includes("專員") || type.includes("股長") || type.includes("幹部")));
+
+        if (category === "幹部") {
+          return isCadre;
+        } else if (category === "高中股") {
+          return (combined.includes("高中") || combined.includes("高職") || combined.includes("二股")) && !isCadre;
+        } else if (category === "國中股") {
+          return (combined.includes("國中") || combined.includes("一股") || (!combined.includes("高中") && !combined.includes("高職"))) && !isCadre;
+        }
+        return true;
+      });
+
+      // 防呆降級保護：若該分類篩選結果為空，自動呈現全體同仁名單
+      if (filteredStaff.length === 0) {
+        filteredStaff = staffWithIndex;
+      }
+
+      picker.innerHTML = "";
       filteredStaff.forEach((s, idx) => {
-        const isSelected = (s.name === pendingSelectedStaffName || (idx === 0 && !pendingSelectedStaffName));
-        picker.innerHTML += `<option value="${escapeHtml(s.name)}" ${isSelected ? 'selected' : ''}>
-          ${escapeHtml(s.name)} 【${escapeHtml(s.type || '同仁')}】
+        const isSelected = (idx === 0);
+        const roleLabel = s.type || s.group || '同仁';
+        // 注意：value 儲存的是唯一的 originalIndex，絕不依賴字串比對
+        picker.innerHTML += `<option value="${s.originalIndex}" ${isSelected ? 'selected' : ''}>
+          ${escapeHtml(s.name)} 【${escapeHtml(roleLabel)}】
         </option>`;
       });
 
-      if (!pendingSelectedStaffName && filteredStaff.length > 0) {
-        pendingSelectedStaffName = filteredStaff[0].name;
+      if (filteredStaff.length > 0) {
+        pendingSelectedIndex = filteredStaff[0].originalIndex;
+      } else {
+        pendingSelectedIndex = -1;
       }
       updateIdentityPreview();
     }
 
-    function onStaffListSelected(name) {
-      pendingSelectedStaffName = name;
+    // 點選清單項目
+    function onStaffListSelected(originalIndexVal) {
+      pendingSelectedIndex = parseInt(originalIndexVal, 10);
       updateIdentityPreview();
     }
 
+    // 更新下方「目前選定身分」預覽 (直接取用該索引之同仁與職稱，100%精準)
     function updateIdentityPreview() {
       const preview = document.getElementById("selectedIdentityPreview");
       if (!preview) return;
-      if (pendingSelectedStaffName) {
-        const found = staffData.find(s => s.name === pendingSelectedStaffName);
-        const role = found ? (found.type || "同仁") : "同仁";
-        preview.innerHTML = `${escapeHtml(pendingSelectedStaffName)} <span class="badge bg-secondary ms-1">${escapeHtml(role)}</span>`;
+      if (pendingSelectedIndex >= 0 && staffData[pendingSelectedIndex]) {
+        const target = staffData[pendingSelectedIndex];
+        const role = target.type || target.group || "同仁";
+        preview.innerHTML = `${escapeHtml(target.name)} <span class="badge bg-secondary ms-1">${escapeHtml(role)}</span>`;
       } else {
         preview.innerText = "尚未選定";
       }
     }
 
-    // 確認切換身分 (直接套用、不衝突)
+    // 確認切換身分 (直接套用、絕不串位)
     function confirmUserSelection() {
-      if (!pendingSelectedStaffName) {
+      if (pendingSelectedIndex < 0 || !staffData[pendingSelectedIndex]) {
         alert("請先從名單中點選您的姓名！");
         return;
       }
 
-      localStorage.setItem("SEC_USER_NAME", pendingSelectedStaffName);
-      applyLocalUserAuth(pendingSelectedStaffName);
+      const target = staffData[pendingSelectedIndex];
+      const role = target.type || target.group || "同仁";
+
+      localStorage.setItem("SEC_USER_NAME", target.name);
+      localStorage.setItem("SEC_USER_ROLE", role);
+
+      applyLocalUserAuth(target.name, role);
       switchUserModalInstance.hide();
     }
 
     // 開啟切換身分視窗
     function openSwitchUserModal() {
       const currentName = currentUserAuth.name || localStorage.getItem("SEC_USER_NAME") || "";
+      const currentRole = currentUserAuth.role || localStorage.getItem("SEC_USER_ROLE") || "";
+
       if (currentName && currentName !== "訪客") {
-        pendingSelectedStaffName = currentName;
-        const found = staffData.find(s => s.name === currentName);
-        if (found) {
-          const type = String(found.type || "");
-          const group = String(found.group || "");
-          if (type.includes("科長") || type.includes("專員") || type.includes("股長") || type.includes("幹部") || group.includes("幹部")) {
-            selectedCategory = "幹部";
-          } else if (group.includes("高中")) {
-            selectedCategory = "高中股";
-          } else {
-            selectedCategory = "國中股";
-          }
+        if (currentRole.includes("科長") || currentRole.includes("專員") || currentRole.includes("股長") || currentRole.includes("幹部")) {
+          selectedCategory = "幹部";
+        } else if (currentRole.includes("高中")) {
+          selectedCategory = "高中股";
+        } else {
+          selectedCategory = "國中股";
         }
       }
       switchIdentityTab(selectedCategory);
       switchUserModalInstance.show();
     }
 
-    // 本地套用身分邏輯
-    function applyLocalUserAuth(staffName) {
-      let role = "同仁";
-      let cleanTarget = staffName.replace(/\[.*?\]|\(.*?\)/g, "").trim();
+    // 本地套用身分邏輯 (支援精確 role 傳入)
+    function applyLocalUserAuth(staffName, explicitRole) {
+      let cleanTarget = String(staffName || "訪客").replace(/\[.*?\]|\(.*?\)/g, "").trim();
+      let role = explicitRole || "同仁";
 
-      if (staffData && staffData.length > 0) {
+      if (!explicitRole && staffData && staffData.length > 0) {
         const matched = staffData.find(s => s.name.replace(/\[.*?\]|\(.*?\)/g, "").trim() === cleanTarget);
         if (matched) {
-          role = matched.type || "同仁";
+          role = matched.type || matched.group || "同仁";
         }
       }
 
@@ -1283,8 +1300,8 @@
       const el = document.getElementById("userAuthDisplay");
       if (!el) return;
       let badgeClass = "auth-badge-staff";
-      if (auth.role === "科長" || auth.role === "專員" || auth.name === "張明文") badgeClass = "auth-badge-leader";
-      else if (auth.role === "股長") badgeClass = "auth-badge-cadre";
+      if (auth.role.includes("科長") || auth.role.includes("專員") || auth.name === "張明文") badgeClass = "auth-badge-leader";
+      else if (auth.role.includes("股長")) badgeClass = "auth-badge-cadre";
 
       el.innerHTML = `
         <span class="badge ${badgeClass} py-1 px-2 d-inline-flex align-items-center" style="font-size: 0.75rem; height: 31px; border-radius: 6px; letter-spacing: 0.3px;">
@@ -2023,6 +2040,7 @@
       let filtered = allTasks.filter(t => {
         const text = (String(t.id || "") + String(t.displayId || "") + String(t.title || "") + String(t.staffDisplay || "") + String(t.progress || "")).toLowerCase();
         
+        // 彈性年度比對（支援 115、115年度、空年度）
         let matchYear = true;
         if (selectedYear) {
           const itemYear = String(t.year || "").trim();
